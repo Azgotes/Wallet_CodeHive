@@ -37,13 +37,10 @@ public class LoginController {
     @FXML
     private void handleSignUp(ActionEvent event) {
         try {
-            // Load the sign-up view
-            Parent signUpView = FXMLLoader.load(getClass().getResource("./src/main/resources/fxml/SignUp.fxml"));
+            // La ligne suivante a été corrigée pour utiliser le chemin relatif à la racine du classpath.
+            Parent signUpView = FXMLLoader.load(getClass().getResource("/fxml/SignUp.fxml"));
 
-            // Get the current stage (window) from the event source
             Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-
-            // Set the scene to the sign-up view
             stage.setScene(new Scene(signUpView));
             stage.show();
         } catch (IOException e) {
@@ -51,5 +48,6 @@ public class LoginController {
             e.printStackTrace();
         }
     }
+
 
 }

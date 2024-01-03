@@ -37,19 +37,42 @@ public class User {
     }
 
     public boolean registerUser(String username, String password) {
+        // Vérifie si l'utilisateur existe déjà
         if (userExists(username)) {
             return false;
         }
+
+        // Génération du sel aléatoire
         byte[] salt = new byte[16];
         RANDOM.nextBytes(salt);
+        // Hashage du mot de passe avec le sel
         String hashedPassword = hashPassword(password, salt);
 
-        try (InputStream is = new FileInputStream(USERS_FILE);
-             Workbook workbook = new XSSFWorkbook(is)) {
+        Workbook workbook = null;
+        FileOutputStream os = null;
+
+        try {
+            // Vérification de l'existence du fichier
+            File file = new File(USERS_FILE);
+            if (!file.exists()) {
+                // Si le fichier n'existe pas, on le crée
+                workbook = new XSSFWorkbook();
+                workbook.createSheet();
+            } else {
+                // Si le fichier existe, on l'ouvre
+                InputStream is = new FileInputStream(USERS_FILE);
+                workbook = new XSSFWorkbook(is);
+                is.close(); // Il est important de fermer le flux après utilisation
+            }
+
+            // Accès ou création de la feuille de travail dans le classeur Excel
             Sheet sheet = workbook.getSheetAt(0);
+
+            // Création d'une nouvelle ligne pour l'utilisateur
             int rowCount = sheet.getLastRowNum();
             Row row = sheet.createRow(++rowCount);
 
+            // Création des cellules pour les données utilisateur
             Cell cellUsername = row.createCell(0);
             cellUsername.setCellValue(username);
 
@@ -59,15 +82,30 @@ public class User {
             Cell cellSalt = row.createCell(2);
             cellSalt.setCellValue(Base64.getEncoder().encodeToString(salt));
 
-            FileOutputStream os = new FileOutputStream(USERS_FILE);
+            // Écriture dans le fichier Excel
+            os = new FileOutputStream(USERS_FILE);
             workbook.write(os);
-            os.close();
+
+            // Retourne true si l'utilisateur a été enregistré avec succès
             return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
+        } finally {
+            // Fermeture des ressources dans le bloc finally pour s'assurer qu'elles sont toujours fermées
+            try {
+                if (os != null) {
+                    os.close();
+                }
+                if (workbook != null) {
+                    workbook.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        return false;
     }
+
 
     private String hashPassword(String password, byte[] salt) {
         try {

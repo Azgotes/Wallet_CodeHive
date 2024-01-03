@@ -15,6 +15,7 @@
         <PasswordField fx:id="txtPassword" promptText="Password"/>
         <HBox spacing="10" alignment="CENTER">
             <Button text="Login" onAction="#handleLogin"/>
+            <Button text="Sign Up" onAction="#handleSignUp"/>
         </HBox>
         <Label fx:id="lblStatus"/>
     </VBox>

@@ -5,21 +5,17 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controller.LoginController"
+<AnchorPane xmlns="http://javafx.com/javafx/16"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.SignUpController"
             prefHeight="400.0" prefWidth="600.0">
-    <VBox alignment="CENTER" spacing="20" layoutX="150" layoutY="50">
-        <TextField fx:id="txtUsername" promptText="Username" maxWidth="200"/>
-        <PasswordField fx:id="txtPassword" promptText="Password" maxWidth="200"/>
-        <HBox spacing="10" alignment="CENTER">
-            <Button text="Login" onAction="#handleLogin" maxWidth="100"/>
-            <!-- Added Sign Up Button -->
-            <Button fx:id="btnSignUp" text="Sign Up" onAction="#handleSignUp" maxWidth="100"/>
-        </HBox>
-        <Label fx:id="lblStatus" textFill="red"/>
+
+    <VBox alignment="CENTER" spacing="20" layoutX="200" layoutY="100">
+        <TextField fx:id="txtNewUsername" promptText="New Username" maxWidth="200"/>
+        <PasswordField fx:id="txtNewPassword" promptText="New Password" maxWidth="200"/>
+        <Button text="Sign Up" onAction="#handleSignUp" maxWidth="100"/>
+        <Label fx:id="lblNewUserStatus" textFill="red"/>
     </VBox>
 </AnchorPane>
