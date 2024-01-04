@@ -27,17 +27,28 @@ public class LoginController {
         String password = txtPassword.getText();
 
         if (userService.authenticate(username, password)) {
-            lblStatus.setText("Login successful.");
-            // Transition to the next view
+            try {
+                // Chargez la vue Wallet après une connexion réussie
+                Parent walletView = FXMLLoader.load(getClass().getResource("/fxml/Wallet.fxml"));
+                Scene walletScene = new Scene(walletView);
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+                stage.setScene(walletScene);
+                stage.setTitle("My Wallet");
+                stage.show();
+            } catch (IOException e) {
+                lblStatus.setText("Error loading wallet view.");
+                e.printStackTrace();
+            }
         } else {
             lblStatus.setText("Login failed.");
         }
     }
 
+
     @FXML
     private void handleSignUp(ActionEvent event) {
         try {
-            // La ligne suivante a été corrigée pour utiliser le chemin relatif à la racine du classpath.
             Parent signUpView = FXMLLoader.load(getClass().getResource("/fxml/SignUp.fxml"));
 
             Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();

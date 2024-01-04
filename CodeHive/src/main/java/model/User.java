@@ -62,10 +62,10 @@ public class User {
                 // Si le fichier existe, on l'ouvre
                 InputStream is = new FileInputStream(USERS_FILE);
                 workbook = new XSSFWorkbook(is);
-                is.close(); // Il est important de fermer le flux après utilisation
+                is.close(); //ferme le flux
             }
 
-            // Accès ou création de la feuille de travail dans le classeur Excel
+            // Accès ou création de la feuille de travail dans l'Excel
             Sheet sheet = workbook.getSheetAt(0);
 
             // Création d'une nouvelle ligne pour l'utilisateur
