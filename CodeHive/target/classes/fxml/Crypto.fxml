@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Button?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controller.CryptoController"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CryptoController">
+    <TableView fx:id="cryptoTable" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="600.0">
+        <columns>
+            <TableColumn fx:id="nameColumn" text="Name" prefWidth="100.0"/>
+            <TableColumn fx:id="priceColumn" text="Price" prefWidth="100.0"/>
+            <TableColumn fx:id="marketCapColumn" text="Market Cap" prefWidth="100.0"/>
+        </columns>
+    </TableView>
+    <Button layoutX="14.0" layoutY="220.0" text="Refresh" fx:id="refreshButton" onAction="#handleRefreshButtonAction"/>
 </AnchorPane>
