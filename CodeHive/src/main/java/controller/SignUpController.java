@@ -21,7 +21,7 @@ public class SignUpController {
 
         if (userService.registerUser(newUsername, newPassword)) {
             lblNewUserStatus.setText("User registered successfully.");
-            // You might want to add code here to switch back to the login view
+            // Vous pouvez ajouter du code ici pour passer à la vue de connexion si nécessaire
         } else {
             lblNewUserStatus.setText("Registration failed. User may already exist.");
         }
