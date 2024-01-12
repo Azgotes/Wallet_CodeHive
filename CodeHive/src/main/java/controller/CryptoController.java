@@ -40,6 +40,7 @@ public class CryptoController {
 
     private void loadCryptoData() {
         String rawData = coinGeckoService.getCryptoData();
+        System.out.println(rawData);
         ObservableList<Crypto> cryptos = FXCollections.observableArrayList();
 
         if (rawData != null) {
