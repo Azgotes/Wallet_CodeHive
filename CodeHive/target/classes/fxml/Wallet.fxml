@@ -1,48 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.chart.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.input.MouseEvent?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.WalletController" stylesheets="@style.css">
-    <VBox fx:id="mainContainer" spacing="20" alignment="TOP_CENTER" AnchorPane.topAnchor="10" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
-        <Label fx:id="lblMyWallet" text="My Wallet" styleClass="title"/>
-        <HBox spacing="15">
-            <VBox spacing="10" alignment="TOP_CENTER">
-                <Label text="My balance"/>
-                <LineChart fx:id="balanceChart" prefWidth="600" prefHeight="300">
-                    <xAxis><CategoryAxis /></xAxis>
-                    <yAxis><NumberAxis /></yAxis>
-                </LineChart>
-            </VBox>
-            <VBox spacing="10" alignment="TOP_CENTER">
-                <Label text="Action"/>
-                <PieChart fx:id="assetDistributionChart" prefWidth="300" prefHeight="300"/>
-            </VBox>
-        </HBox>
-        <HBox spacing="15">
-            <VBox spacing="10" alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
-                <Label text="My crypto"/>
-                <TableView fx:id="cryptoTable" prefHeight="200">
-                    <columns>
-                        <TableColumn text="Name"/>
-                        <TableColumn text="Total balance"/>
-                        <TableColumn text="Price"/>
-                    </columns>
-                </TableView>
-            </VBox>
-            <VBox spacing="10" alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
-                <Label text="My actions"/>
-                <TableView fx:id="actionTable" prefHeight="200">
-                    <columns>
-                        <TableColumn text="Name"/>
-                        <TableColumn text="Total balance"/>
-                        <TableColumn text="Price"/>
-                    </columns>
-                </TableView>
-            </VBox>
-        </HBox>
-    </VBox>
+<AnchorPane stylesheets="@style.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.WalletController">
+    <SplitPane fx:id="splitPane" dividerPositions="0.2" orientation="HORIZONTAL">
+        <!-- Left Side (Menu) -->
+        <VBox alignment="CENTER_LEFT" spacing="10" styleClass="menu" onMouseEntered="#handleMenuMouseEntered" onMouseExited="#handleMenuMouseExited">
+            <ImageView fitHeight="73.0" fitWidth="82.0" pickOnBounds="true" preserveRatio="true" />
+            <Button text="Toggle Menu" onAction="#handleMenuButtonClick" />
+            <Button onAction="#handleMenuItem1" text="My Wallet" />
+            <Button onAction="#handleMenuItem2" text="Transaction" />
+            <Button onAction="#handleMenuItem3" text="Action" />
+            <Button onAction="#handleMenuItem4" text="Crypto" />
+            <Button onAction="#handleMenuItem5" text="Exchange" />
+            <Button mnemonicParsing="false" text="Setting" />
+        </VBox>
+
+        <!-- Right Side (Main Content) -->
+        <VBox fx:id="mainContainer" alignment="TOP_CENTER" spacing="20">
+            <Label fx:id="lblMyWallet" styleClass="title" text="My Wallet" />
+            <HBox spacing="15">
+                <VBox alignment="TOP_CENTER" spacing="10">
+                    <Label text="My balance" />
+                    <LineChart fx:id="balanceChart" prefHeight="300" prefWidth="600">
+                        <xAxis><CategoryAxis /></xAxis>
+                        <yAxis><NumberAxis /></yAxis>
+                    </LineChart>
+                </VBox>
+                <VBox alignment="TOP_CENTER" spacing="10">
+                    <Label text="Action" />
+                    <PieChart fx:id="assetDistributionChart" prefHeight="300" prefWidth="300" />
+                </VBox>
+            </HBox>
+            <HBox spacing="15">
+                <VBox alignment="TOP_CENTER" spacing="10" HBox.hgrow="ALWAYS">
+                    <Label text="My crypto" />
+                    <TableView fx:id="cryptoTable" prefHeight="200">
+                        <columns>
+                            <TableColumn text="Name" />
+                            <TableColumn text="Total balance" />
+                            <TableColumn text="Price" />
+                        </columns>
+                    </TableView>
+                </VBox>
+                <VBox alignment="TOP_CENTER" spacing="10" HBox.hgrow="ALWAYS">
+                    <Label text="My actions" />
+                    <TableView fx:id="actionTable" prefHeight="200">
+                        <columns>
+                            <TableColumn text="Name" />
+                            <TableColumn text="Total balance" />
+                            <TableColumn text="Price" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </HBox>
+        </VBox>
+    </SplitPane>
 </AnchorPane>

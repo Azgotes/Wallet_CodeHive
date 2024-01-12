@@ -1,24 +1,84 @@
-.title {
-    -fx-font-size: 24px;
-    -fx-text-fill: #2c3e50;
-    -fx-font-weight: bold;
+/* style.css */
+
+body {
+  -fx-background-color: #1a1a1a;
 }
 
-.chart-series-line {
-    -fx-stroke: #3498db;
-    -fx-stroke-width: 2px;
+#app {
+  -fx-display: grid;
+  -fx-grid-columns: '100%';
+  -fx-grid-gap: 10px;
 }
 
-.chart-pie {
-    -fx-pie-color: #e74c3c, #3498db, #2ecc71, #f1c40f, #8e44ad;
+#menuVBox {
+  -fx-background-color: #0d0d0d;
+  -fx-border-width: 2;
+  -fx-border-color: #c7edef;
+  -fx-border-radius: 9999px;
+  -fx-text-align: center;
+  -fx-line-height: 24px;
+  -fx-color: #c7edef;
+  -fx-cursor: hand;
+  -fx-font-size: 1rem; /* Cette valeur doit être correcte, assurez-vous que c'est le cas */
+  -fx-font-weight: bold;
+  -fx-font-family: sans-serif;
+  -fx-padding: 8 16;
+  -fx-position: relative;
+  -fx-text-decoration: none;
+  -fx-height: 60px;
+  -fx-display: flex;
+  -fx-align-items: center;
+  -fx-justify-content: center;
+  -fx-width: 300px;
+  -fx-transition: transform 0.2s;
 }
 
-.table-view {
-    -fx-base: #ecf0f1;
+#menuVBox:hover {
+  -fx-translate-y: -5;
+  -fx-scale-y: 1.05;
+  -fx-background-color: #fff;
+  -fx-color: #0d0d0d;
 }
 
-.table-column {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #34495e;
+#menuVBox:pressed {
+  -fx-translate-y: 0;
+  -fx-scale-y: 0.95;
+}
+
+#menuVBox span {
+  -fx-bottom: -2px;
+  -fx-clip-path: polygon(0% 0%, 100% 0%, 50% 50%, 50% 50%); /* Assurez-vous que la syntaxe polygon est correcte */
+  -fx-left: -2px;
+  -fx-position: absolute;
+  -fx-right: -2px;
+  -fx-top: -2px;
+  -fx-z-index: 1;
+}
+
+#menuVBox span:hover {
+  -fx-clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); /* Assurez-vous que la syntaxe polygon est correcte */
+  -fx-z-index: 2;
+}
+
+#menuVBox b {
+  -fx-clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); /* Assurez-vous que la syntaxe polygon est correcte */
+  -fx-background-color: #0d0d0d;
+  -fx-border-width: 2;
+  -fx-border-color: #c7edef;
+  -fx-bottom: -2px;
+  -fx-color: #fafafa;
+  -fx-font-weight: bold;
+  -fx-padding: 8 16;
+  -fx-position: absolute;
+  -fx-right: -2px;
+  -fx-top: -2px;
+  -fx-transition: clip-path 0.25s ease;
+  -fx-border-radius: 9999px;
+  -fx-display: flex;
+  -fx-align-items: center;
+  -fx-justify-content: center;
+}
+
+#menuVBox b:hover {
+  -fx-clip-path: none; /* Supprimez ou ajustez selon vos besoins */
 }

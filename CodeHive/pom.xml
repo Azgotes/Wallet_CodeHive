@@ -11,18 +11,20 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-<junit.version>5.10.0</junit.version>  </properties>
+    <junit.version>5.10.0</junit.version>
+    <javafx.version>17.0.2</javafx.version>
+  </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>21</version>
+      <version>${javafx.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
-      <version>21</version>
+      <version>${javafx.version}</version>
     </dependency>
 
     <dependency>
@@ -41,7 +43,6 @@
       <version>2.18.0</version>
     </dependency>
 
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -53,7 +54,8 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
-    </dependency>  </dependencies>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
@@ -62,8 +64,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
         <configuration>
-          <source>21</source>
-          <target>21</target>
+          <source>${javafx.version}</source>
+          <target>${javafx.version}</target>
         </configuration>
       </plugin>
       <plugin>
