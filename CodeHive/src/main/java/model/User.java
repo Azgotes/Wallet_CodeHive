@@ -2,12 +2,13 @@ package model;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.Base64;
 
 public class User {
     private static final String USERS_FILE = "./Files/users.xlsx";
@@ -21,10 +22,14 @@ public class User {
                 Cell usernameCell = row.getCell(0);
                 Cell passwordCell = row.getCell(1);
                 Cell saltCell = row.getCell(2);
-                if (usernameCell.getStringCellValue().equals(username)) {
+
+                // Vérifier si usernameCell n'est pas null avant d'accéder à sa valeur
+                if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
                     String salt = saltCell.getStringCellValue();
                     String hashedPassword = hashPassword(password, Base64.getDecoder().decode(salt));
-                    if (passwordCell.getStringCellValue().equals(hashedPassword)) {
+
+                    // Vérifier si passwordCell n'est pas null avant d'accéder à sa valeur
+                    if (passwordCell != null && passwordCell.getStringCellValue().equals(hashedPassword)) {
                         return true;
                     }
                     break;
@@ -36,7 +41,8 @@ public class User {
         return false;
     }
 
-    public boolean registerUser(String username, String password) {
+
+    public boolean registerUser(String username, String password, String email) {
         // Vérifie si l'utilisateur existe déjà
         if (userExists(username)) {
             return false;
@@ -82,6 +88,9 @@ public class User {
             Cell cellSalt = row.createCell(2);
             cellSalt.setCellValue(Base64.getEncoder().encodeToString(salt));
 
+            Cell cellEmail = row.createCell(3);
+            cellEmail.setCellValue(email);
+
             // Écriture dans le fichier Excel
             os = new FileOutputStream(USERS_FILE);
             workbook.write(os);
@@ -105,7 +114,6 @@ public class User {
             }
         }
     }
-
 
     private String hashPassword(String password, byte[] salt) {
         try {

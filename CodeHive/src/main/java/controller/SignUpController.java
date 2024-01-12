@@ -17,6 +17,7 @@ import java.io.IOException;
 public class SignUpController {
     @FXML private TextField txtNewUsername;
     @FXML private PasswordField txtNewPassword;
+    @FXML private TextField txtEmail; // Nouveau champ d'e-mail
     @FXML private Label lblNewUserStatus;
 
     private User userService = new User();
@@ -25,18 +26,30 @@ public class SignUpController {
     private void handleSignUp(ActionEvent event) {
         String newUsername = txtNewUsername.getText();
         String newPassword = txtNewPassword.getText();
+        String email = txtEmail.getText();
 
-        if (userService.registerUser(newUsername, newPassword)) {
-            lblNewUserStatus.setText("User registered successfully.");
+        if (validateEmail(email) && userService.registerUser(newUsername, newPassword, email)) {
+            // Envoyez un e-mail de confirmation ici (étape supplémentaire)
+            lblNewUserStatus.setText("User registered successfully. Check your email for confirmation.");
             // Vous pouvez ajouter du code ici pour passer à la vue de connexion si nécessaire
         } else {
-            lblNewUserStatus.setText("Registration failed. User may already exist.");
+            lblNewUserStatus.setText("Registration failed. User may already exist or email is invalid.");
         }
     }
 
     @FXML
     private void handleReturnButton(ActionEvent event) {
         redirectToLoginPage(event);
+    }
+
+    @FXML
+    private void handleCreateEmail(ActionEvent event) {
+        // Ajoutez ici le code pour créer un e-mail et l'enregistrer dans votre fichier xlsx
+    }
+
+    @FXML
+    private void handleViewEmails(ActionEvent event) {
+        // Ajoutez ici le code pour afficher les e-mails à partir de votre fichier xlsx
     }
 
     private void redirectToLoginPage(ActionEvent event) {
@@ -51,5 +64,10 @@ public class SignUpController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean validateEmail(String email) {
+        // Ajoutez votre logique de validation d'e-mail ici (regex, etc.)
+        return email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
     }
 }

@@ -9,17 +9,17 @@
     <VBox alignment="CENTER" layoutX="221.0" layoutY="100.0" prefHeight="200.0" prefWidth="158.0" spacing="20">
         <TextField fx:id="txtNewUsername" maxWidth="200" promptText="New Username" />
         <PasswordField fx:id="txtNewPassword" maxWidth="200" promptText="New Password" />
+        <TextField fx:id="txtEmail" maxWidth="200" promptText="E-mail" /> <!-- Ajout du champ d'e-mail -->
         <Button maxWidth="100" onAction="#handleSignUp" text="Sign Up" />
-
-       <Button fx:id="btnReturn" mnemonicParsing="false" onAction="#handleReturnButton" prefHeight="25.0" prefWidth="27.0">
-           <graphic>
-               <ImageView fitHeight="20.0" fitWidth="20.0">
-                   <image>
-                       <Image url="file:C:/Users/Skilo/IdeaProjects/CodeHive/Files/Return.png" />
-                   </image>
-               </ImageView>
-           </graphic>
-       </Button>
+        <Button fx:id="btnReturn" mnemonicParsing="false" onAction="#handleReturnButton" prefHeight="25.0" prefWidth="27.0">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0">
+                    <image>
+                        <Image url="file:C:/Users/Skilo/IdeaProjects/CodeHive/Files/Return.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
         <Label fx:id="lblNewUserStatus" textFill="red" />
     </VBox>
 </AnchorPane>
