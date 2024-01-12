@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TransactionController" style="-fx-padding: 10;">
+    <TextField fx:id="txtAssetName" promptText="Nom de l'actif (ex : Bitcoin)" style="-fx-pref-width: 200;"/>
+    <TextField fx:id="txtAmount" promptText="Montant" style="-fx-pref-width: 200;"/>
+    <Button text="Acheter" onAction="#handleBuy" style="-fx-background-color: #007bff; -fx-text-fill: white;"/>
+    <Button text="Vendre" onAction="#handleSell" style="-fx-background-color: #dc3545; -fx-text-fill: white;"/>
+    <Label fx:id="lblStatus" textFill="red"/>
+</VBox>

@@ -66,5 +66,29 @@ public class CoinGeckoService {
         }
         return prices;
     }
+
+    public double getCurrentCryptoPrice(String cryptoId) {
+        try {
+            HttpClient client = HttpClient.newBuilder()
+                    .version(HttpClient.Version.HTTP_2)
+                    .followRedirects(HttpClient.Redirect.NORMAL)
+                    .connectTimeout(Duration.ofSeconds(20))
+                    .build();
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(URI.create(COINGECKO_API_URL + "simple/price?ids=" + cryptoId + "&vs_currencies=usd"))
+                    .timeout(Duration.ofMinutes(1))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            JSONObject jsonResponse = new JSONObject(response.body());
+            return jsonResponse.getJSONObject(cryptoId).getDouble("usd");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
 }
 

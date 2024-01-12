@@ -52,4 +52,36 @@ public class ExcelReader {
             throw new IOException("Price for asset '" + assetName + "' not found in sheet '" + sheetName + "'");
         }
     }
+
+    public Map<String, Double> readUserAssets(String username, String excelFilePath) throws IOException {
+        Map<String, Double> userAssets = new HashMap<>();
+        FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheet("/Files/Users.xlsx");
+        if (sheet == null) {
+            throw new IOException("Sheet 'Users' does not exist in the workbook");
+        }
+
+        for (Row row : sheet) {
+            Cell usernameCell = row.getCell(0);
+            if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
+                // Les actifs commencent à la 5ème colonne (index 4)
+                for (int columnIndex = 4; columnIndex < row.getLastCellNum(); columnIndex++) {
+                    Cell assetCell = row.getCell(columnIndex);
+                    if (assetCell != null && assetCell.getCellType() == CellType.NUMERIC) {
+                        String assetName = sheet.getRow(0).getCell(columnIndex).getStringCellValue();
+                        double assetValue = assetCell.getNumericCellValue();
+                        userAssets.put(assetName, assetValue);
+                    }
+                }
+                break;
+            }
+        }
+
+        workbook.close();
+        inputStream.close();
+
+        return userAssets;
+    }
 }

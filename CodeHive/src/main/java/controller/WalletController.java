@@ -5,15 +5,24 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.Parent;
+
+import java.io.IOException;
+
 
 public class WalletController {
 
@@ -115,7 +124,19 @@ public class WalletController {
         }
     }
 
-    public void handleMenuItem2(ActionEvent actionEvent) {
+    @FXML
+    private void handleMenuItem2() {
+        try {
+            Parent transactionRoot = FXMLLoader.load(getClass().getResource("/fxml/transaction.fxml"));
+            Scene transactionScene = new Scene(transactionRoot);
+            Stage transactionStage = new Stage();
+            transactionStage.setTitle("Transactions");
+            transactionStage.setScene(transactionScene);
+            transactionStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void handleMenuItem3(ActionEvent actionEvent) {

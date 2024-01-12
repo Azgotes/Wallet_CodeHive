@@ -1,6 +1,7 @@
 package model;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
@@ -13,6 +14,7 @@ import java.util.Base64;
 public class User {
     private static final String USERS_FILE = "./Files/users.xlsx";
     private static final SecureRandom RANDOM = new SecureRandom();
+    private String username; // Champ pour stocker le nom d'utilisateur actuel
 
     public boolean authenticate(String username, String password) {
         try (InputStream is = new FileInputStream(USERS_FILE);
@@ -23,13 +25,12 @@ public class User {
                 Cell passwordCell = row.getCell(1);
                 Cell saltCell = row.getCell(2);
 
-                // Vérifier si usernameCell n'est pas null avant d'accéder à sa valeur
                 if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
                     String salt = saltCell.getStringCellValue();
                     String hashedPassword = hashPassword(password, Base64.getDecoder().decode(salt));
 
-                    // Vérifier si passwordCell n'est pas null avant d'accéder à sa valeur
                     if (passwordCell != null && passwordCell.getStringCellValue().equals(hashedPassword)) {
+                        this.username = username; // Mise à jour du nom d'utilisateur actuel
                         return true;
                     }
                     break;
@@ -39,6 +40,10 @@ public class User {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public String getUsername() {
+        return this.username; // Retourner le nom d'utilisateur actuel
     }
 
 
@@ -132,7 +137,10 @@ public class User {
              Workbook workbook = new XSSFWorkbook(is)) {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
-                if (row.getCell(0).getStringCellValue().equals(username)) {
+                Cell usernameCell = row.getCell(0);
+
+                if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
+                    // Votre logique existante
                     return true;
                 }
             }
@@ -141,4 +149,5 @@ public class User {
         }
         return false;
     }
+
 }

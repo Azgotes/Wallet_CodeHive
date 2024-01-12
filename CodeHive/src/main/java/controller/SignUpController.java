@@ -17,6 +17,7 @@ import java.io.IOException;
 public class SignUpController {
     @FXML private TextField txtNewUsername;
     @FXML private PasswordField txtNewPassword;
+    @FXML private TextField txtNewEmail;
     @FXML private Label lblNewUserStatus;
 
     private User userService = new User();
@@ -25,10 +26,10 @@ public class SignUpController {
     private void handleSignUp(ActionEvent event) {
         String newUsername = txtNewUsername.getText();
         String newPassword = txtNewPassword.getText();
+        String email = txtNewEmail.getText(); // Récupération de l'email
 
-        if (userService.registerUser(newUsername, newPassword)) {
+        if (userService.registerUser(newUsername, newPassword, email)) {
             lblNewUserStatus.setText("User registered successfully.");
-            // Vous pouvez ajouter du code ici pour passer à la vue de connexion si nécessaire
         } else {
             lblNewUserStatus.setText("Registration failed. User may already exist.");
         }

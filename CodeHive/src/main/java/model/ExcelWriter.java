@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.io.FileInputStream;
+
 
 public class ExcelWriter {
 
@@ -56,5 +58,56 @@ public class ExcelWriter {
             row.createCell(0).setCellValue(entry.getKey());
             row.createCell(1).setCellValue(entry.getValue());
         }
+    }
+
+    public void updateUserAssets(String username, Map<String, Double> assets, String excelFilePath) throws IOException {
+        FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheet("Users");
+        if (sheet == null) {
+            throw new IOException("Sheet 'Users' does not exist in the workbook");
+        }
+
+        int userRowNum = -1;
+        for (Row row : sheet) {
+            Cell usernameCell = row.getCell(0);
+            if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
+                userRowNum = row.getRowNum();
+                break;
+            }
+        }
+
+        if (userRowNum == -1) {
+            throw new IOException("User '" + username + "' not found in the workbook");
+        }
+
+        Row userRow = sheet.getRow(userRowNum);
+        for (Map.Entry<String, Double> entry : assets.entrySet()) {
+            int column = findColumnIndex(sheet, entry.getKey(), 4); // Recherche à partir de la 5ème colonne
+            if (column == -1) {
+                throw new IOException("Asset '" + entry.getKey() + "' not found in the workbook");
+            }
+            Cell cell = userRow.createCell(column, CellType.NUMERIC);
+            cell.setCellValue(entry.getValue());
+        }
+
+        inputStream.close();
+
+        try (FileOutputStream outputStream = new FileOutputStream(new File(excelFilePath))) {
+            workbook.write(outputStream);
+        } finally {
+            workbook.close();
+        }
+    }
+
+    private int findColumnIndex(Sheet sheet, String header, int startColumn) {
+        Row headerRow = sheet.getRow(0);
+        for (int columnIndex = startColumn; columnIndex < headerRow.getLastCellNum(); columnIndex++) {
+            Cell cell = headerRow.getCell(columnIndex);
+            if (cell != null && cell.getStringCellValue().equals(header)) {
+                return columnIndex;
+            }
+        }
+        return -1;
     }
 }

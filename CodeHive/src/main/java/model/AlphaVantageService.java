@@ -70,6 +70,27 @@ public class AlphaVantageService {
         }
         return prices;
     }
+
+    public double getCurrentStockPrice(String symbol) {
+        try {
+            String rawData = getStockData(symbol);
+            if (rawData != null) {
+                JSONObject jsonObject = new JSONObject(rawData);
+                if (!jsonObject.has("Time Series (Daily)")) {
+                    return -1;
+                }
+                JSONObject timeSeries = jsonObject.getJSONObject("Time Series (Daily)");
+                String latestDate = timeSeries.keys().next();
+                JSONObject latestData = timeSeries.getJSONObject(latestDate);
+                return latestData.getDouble("4. close");
+            }
+            return -1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
 }
 
 
