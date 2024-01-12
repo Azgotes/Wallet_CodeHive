@@ -19,7 +19,7 @@ body {
   -fx-line-height: 24px;
   -fx-color: #c7edef;
   -fx-cursor: hand;
-  -fx-font-size: 1rem; /* Cette valeur doit être correcte, assurez-vous que c'est le cas */
+  -fx-font-size: 16px; /* Modifié de 1rem à 16px */
   -fx-font-weight: bold;
   -fx-font-family: sans-serif;
   -fx-padding: 8 16;
@@ -46,8 +46,7 @@ body {
 }
 
 #menuVBox span {
-  -fx-bottom: -2px;
-  -fx-clip-path: polygon(0% 0%, 100% 0%, 50% 50%, 50% 50%); /* Assurez-vous que la syntaxe polygon est correcte */
+  /* -fx-clip-path supprimé car non supporté */
   -fx-left: -2px;
   -fx-position: absolute;
   -fx-right: -2px;
@@ -56,12 +55,12 @@ body {
 }
 
 #menuVBox span:hover {
-  -fx-clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); /* Assurez-vous que la syntaxe polygon est correcte */
+  /* -fx-clip-path supprimé car non supporté */
   -fx-z-index: 2;
 }
 
 #menuVBox b {
-  -fx-clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); /* Assurez-vous que la syntaxe polygon est correcte */
+  /* -fx-clip-path supprimé car non supporté */
   -fx-background-color: #0d0d0d;
   -fx-border-width: 2;
   -fx-border-color: #c7edef;
@@ -72,7 +71,7 @@ body {
   -fx-position: absolute;
   -fx-right: -2px;
   -fx-top: -2px;
-  -fx-transition: clip-path 0.25s ease;
+  -fx-transition: clip-path 0.25s ease; /* Notez que la transition pourrait ne pas fonctionner comme prévu */
   -fx-border-radius: 9999px;
   -fx-display: flex;
   -fx-align-items: center;
@@ -80,5 +79,5 @@ body {
 }
 
 #menuVBox b:hover {
-  -fx-clip-path: none; /* Supprimez ou ajustez selon vos besoins */
+  -fx-clip-path: none; /* Supprimé */
 }

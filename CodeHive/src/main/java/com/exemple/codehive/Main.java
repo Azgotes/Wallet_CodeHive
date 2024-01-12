@@ -8,15 +8,15 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    /*@Override
+    @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/Login.fxml"));
         primaryStage.setTitle("Crypto Wallet Login");
         primaryStage.setScene(new Scene(root, 600, 400));
         primaryStage.show();
-    }*/
+    }
 
-    @Override
+    /*@Override
     public void start(Stage primaryStage) {
         try {
             // Charge le fichier FXML pour l'interface utilisateur des cryptomonnaies
@@ -34,12 +34,12 @@ public class Main extends Application {
             Stage actionStage = new Stage();
             actionStage.setTitle("Action");
             actionStage.setScene(actionScene);
-            actionStage.show();*/
+            actionStage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 
 
