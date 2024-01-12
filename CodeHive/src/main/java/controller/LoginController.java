@@ -44,8 +44,6 @@ public class LoginController {
             lblStatus.setText("Login failed.");
         }
     }
-
-
     @FXML
     private void handleSignUp(ActionEvent event) {
         try {
