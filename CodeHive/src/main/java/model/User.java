@@ -1,7 +1,6 @@
 package model;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
@@ -9,12 +8,30 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Base64;
+import java.util.*;
 
 public class User {
     private static final String USERS_FILE = "./Files/users.xlsx";
     private static final SecureRandom RANDOM = new SecureRandom();
     private String username; // Champ pour stocker le nom d'utilisateur actuel
+
+    private Double balanceCrypto;
+
+    private Double balanceCash;
+
+    private Double balanceStock;
+
+    private Map<Crypto,Double> cryptoOwned = new HashMap<>();
+
+    private Map<Action,Double> actionOwned = new HashMap<>();
+
+
+    private ExcelWriter excelWriter = new ExcelWriter();
+
+    private ExcelReader excelReader = new ExcelReader();
+
+
+
 
     public boolean authenticate(String username, String password) {
         try (InputStream is = new FileInputStream(USERS_FILE);
@@ -25,12 +42,23 @@ public class User {
                 Cell passwordCell = row.getCell(1);
                 Cell saltCell = row.getCell(2);
 
+                Cell cryptoCell = row.getCell(5);
+                Cell stockCell = row.getCell(6);
+                Cell cashCell = row.getCell(7);
+
+
                 if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
                     String salt = saltCell.getStringCellValue();
                     String hashedPassword = hashPassword(password, Base64.getDecoder().decode(salt));
 
+
+
+
                     if (passwordCell != null && passwordCell.getStringCellValue().equals(hashedPassword)) {
                         this.username = username; // Mise à jour du nom d'utilisateur actuel
+                        setBalanceCrypto(cryptoCell.getNumericCellValue());
+                        setBalanceStock(stockCell.getNumericCellValue());
+                        setBalanceCash(cashCell.getNumericCellValue());
                         return true;
                     }
                     break;
@@ -111,6 +139,30 @@ public class User {
         }
     }
 
+    public void initCryptoOwned(List<Crypto> cryptoList){
+        this.cryptoOwned = new HashMap<>();
+        cryptoList.forEach(crypto -> {
+            try {
+                var value = excelReader.readExcelNumericValue(this.username,crypto.getName(),"./Files/users.xlsx");
+                this.cryptoOwned.put(crypto,value);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void initActionOwned(List<Action> actionList){
+        this.actionOwned = new HashMap<>();
+        actionList.forEach(action -> {
+            try {
+                var value = excelReader.readExcelNumericValue(this.username,action.getSymbol(),"./Files/users.xlsx");
+                this.actionOwned.put(action,value);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     private String hashPassword(String password, byte[] salt) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -141,4 +193,98 @@ public class User {
         return false;
     }
 
+
+
+    public double getBalanceCrypto() {
+        return balanceCrypto;
+    }
+
+    public Double getBalanceCash() {
+        return balanceCash;
+    }
+
+    public double getBalanceStock() {
+        return balanceStock;
+
+    }
+
+    public void getCryptoValueOwned(String cryptoName, Double cryptoValue){
+        Map<String,Double> newValues = new HashMap<>();
+        newValues.put(cryptoName,cryptoValue);
+        try {
+            this.excelWriter.updateUserAssets(this.username,newValues,"./Files/users.xlsx");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setBalanceCrypto(double balanceCrypto) {
+        this.balanceCrypto = balanceCrypto;
+
+        Map<String,Double> newValues = new HashMap<>();
+        newValues.put("balance_cash",this.balanceCrypto);
+        try {
+            this.excelWriter.updateUserAssets(this.username,newValues,"./Files/users.xlsx");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setBalanceCash(double balanceCash) {
+        this.balanceCash = balanceCash;
+
+        Map<String,Double> newValues = new HashMap<>();
+        newValues.put("balance_cash",this.balanceCash);
+        try {
+            this.excelWriter.updateUserAssets(this.username,newValues,"./Files/users.xlsx");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+    public void setBalanceStock(double balanceStock) {
+        this.balanceStock = balanceStock;
+
+        Map<String,Double> newValues = new HashMap<>();
+        newValues.put("balance_cash",this.balanceStock);
+        try {
+            this.excelWriter.updateUserAssets(this.username,newValues,"./Files/users.xlsx");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Double getBalanceTot(){
+        return this.balanceCash + this.balanceCrypto + this.balanceStock;
+    }
+
+    public Double getBalanceCashAsPercentOfTot(){
+        return (this.balanceCash / this.getBalanceTot()) * 100;
+    }
+
+    public Double getBalanceStockAsPercentOfTot(){
+        return (this.balanceStock / this.getBalanceTot()) * 100;
+    }
+
+    public Double getBalanceCryptoAsPercentOfTot(){
+        return (this.balanceCrypto / this.getBalanceTot()) * 100;
+    }
+
+    public Map<Crypto, Double> getCryptoOwned() {
+        return cryptoOwned;
+    }
+
+    public void setCryptoOwned(Map<Crypto, Double> cryptoOwned) {
+        this.cryptoOwned = cryptoOwned;
+    }
+
+    public Map<Action, Double> getActionOwned() {
+        return actionOwned;
+    }
+
+    public void setActionOwned(Map<Action, Double> actionOwned) {
+        this.actionOwned = actionOwned;
+    }
 }

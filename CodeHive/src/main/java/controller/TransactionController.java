@@ -32,7 +32,8 @@ public class TransactionController {
             double cashAmount = Double.parseDouble(txtAmount.getText());
             AssetType assetType = determineAssetType(assetName);
             if (currentUser != null && assetType != null) {
-                boolean success = transactionManager.executeTransaction(currentUser.getUsername(), assetName, cashAmount, true, assetType);
+                boolean success = transactionManager.executeTransaction(currentUser.getUsername(),
+                        assetName, cashAmount, true, assetType,this.currentUser);
                 lblStatus.setText(success ? "Purchase successful." : "Purchase failed.");
             } else {
                 lblStatus.setText("Transaction failed. Check asset name and type.");
@@ -49,7 +50,8 @@ public class TransactionController {
             double cashAmount = Double.parseDouble(txtAmount.getText());
             AssetType assetType = determineAssetType(assetName);
             if (currentUser != null && assetType != null) {
-                boolean success = transactionManager.executeTransaction(currentUser.getUsername(), assetName, cashAmount, false, assetType);
+                boolean success = transactionManager.executeTransaction(currentUser.getUsername(),
+                        assetName, cashAmount, false, assetType,this.currentUser);
                 lblStatus.setText(success ? "Sale successful." : "Sale failed.");
             } else {
                 lblStatus.setText("Transaction failed. Check asset name and type.");
@@ -82,6 +84,7 @@ public class TransactionController {
             // Configurez le contrôleur WalletController si nécessaire
             WalletController walletController = loader.getController();
             walletController.setCurrentUser(currentUser);
+            walletController.initComponents();
 
             // Chargez la vue dans la scène actuelle ou une nouvelle, selon vos besoins
             Scene walletScene = new Scene(walletRoot);

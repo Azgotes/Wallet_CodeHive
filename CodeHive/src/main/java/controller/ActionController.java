@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import model.Action;
 import model.ExcelReader;
 import model.StartupManager;
+import model.User;
 
 import java.io.IOException;
 import java.util.Map;
@@ -31,6 +32,8 @@ public class ActionController {
     private TableColumn<Action, Double> priceColumn;
     private final StartupManager startupManager = new StartupManager();
 
+    private User currentUser;
+
 
     private final ExcelReader excelReader = new ExcelReader();
 
@@ -40,6 +43,10 @@ public class ActionController {
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         loadActionData();
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 
     private void loadActionData() {
@@ -59,21 +66,25 @@ public class ActionController {
 
     @FXML
     protected void handleBackButtonAction(ActionEvent event) {
-        navigateToWallet(event);
-    }
-
-    private void navigateToWallet(ActionEvent event) {
         try {
-            Parent walletView = FXMLLoader.load(getClass().getResource("/fxml/Wallet.fxml"));
-            Scene walletScene = new Scene(walletView);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Wallet.fxml")); // Mettez à jour avec le chemin correct
+            Parent walletRoot = loader.load();
+
+            // Configurez le contrôleur WalletController si nécessaire
+            WalletController walletController = loader.getController();
+            walletController.setCurrentUser(currentUser);
+            walletController.initComponents();
+
+            // Chargez la vue dans la scène actuelle ou une nouvelle, selon vos besoins
+            Scene walletScene = new Scene(walletRoot);
+            Stage stage = (Stage) actionTable.getScene().getWindow(); // Récupérez la fenêtre actuelle
             stage.setScene(walletScene);
-            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            // Gestion des erreurs
+            // Gérez l'exception comme vous le jugez approprié
         }
     }
+
 
     @FXML
     protected void handleRefreshButtonAction(ActionEvent event) {

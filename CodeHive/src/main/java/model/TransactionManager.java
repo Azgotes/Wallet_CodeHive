@@ -9,7 +9,12 @@ public class TransactionManager {
     private CoinGeckoService coinGeckoService = new CoinGeckoService();
     private AlphaVantageService alphaVantageService = new AlphaVantageService();
 
-    public boolean executeTransaction(String username, String assetName, double cashValue, boolean isBuying, AssetType assetType) {
+    public boolean executeTransaction(String username,
+                                      String assetName,
+                                      double cashValue,
+                                      boolean isBuying,
+                                      AssetType assetType,
+                                      User user) {
         try {
             double assetPrice = getCurrentPrice(assetName, assetType);
             double assetAmount = cashValue / assetPrice;
@@ -69,6 +74,10 @@ public class TransactionManager {
             userAssets.put(assetName, assetAmount);
 
             excelWriter.updateUserAssets(username, userAssets, "./Files/users.xlsx");
+            user.setBalanceStock(balanceStocks);
+            user.setBalanceCrypto(balanceCrypto);
+            user.setBalanceCash(balanceCash);
+
 
             return true;
         } catch (IOException e) {

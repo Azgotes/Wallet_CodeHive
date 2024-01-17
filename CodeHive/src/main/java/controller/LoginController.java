@@ -38,6 +38,7 @@ public class LoginController {
                 WalletController walletController = loader.getController();
                 walletController.setCurrentUser(userService); // userService contient maintenant l'utilisateur authentifié
 
+                walletController.initComponents();
                 // Affichez la vue Wallet
                 Scene walletScene = new Scene(walletView);
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

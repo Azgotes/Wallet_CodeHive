@@ -12,11 +12,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
-import model.Crypto;
-import model.ExcelReader;
-import model.StartupManager;
+import model.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public class CryptoController {
@@ -34,51 +33,66 @@ public class CryptoController {
 
     private final StartupManager startupManager = new StartupManager();
 
+    private List<Crypto> cryptoList;
+
+    private User currentUser;
+
 
     @FXML
     public void initialize() {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        loadCryptoData();
+
+
+
     }
 
-    private void loadCryptoData() {
-        ObservableList<Crypto> cryptos = FXCollections.observableArrayList();
+    public void initCryptoList(List<Crypto> cryptoList){
+        this.cryptoList = cryptoList;
+        this.setCryptoData(this.cryptoList);
 
-        try {
-            Map<String, Double> prices = excelReader.readPrices("./Files/ActionCrypto.xlsx", "Cryptocurrencies");
-            prices.forEach((name, price) -> {
-                cryptos.add(new Crypto(name, price));
-            });
-            cryptoTable.setItems(cryptos);
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle the exception, possibly with a user alert
-        }
+        ObservableList<Crypto> crypto = FXCollections.observableArrayList();
+        crypto.addAll(cryptoList);
+        this.cryptoTable.setItems(crypto);
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    public void setCryptoData(List<Crypto> cryptoList){
+        ObservableList<Crypto> cryptos = FXCollections.observableArrayList();
+        cryptoList.stream().map(cryptos::add);
+        cryptoTable.setItems(cryptos);
     }
 
     @FXML
     protected void handleBackButtonAction(ActionEvent event) {
-        navigateToWallet(event);
-    }
-
-    private void navigateToWallet(ActionEvent event) {
         try {
-            Parent walletView = FXMLLoader.load(getClass().getResource("/fxml/Wallet.fxml"));
-            Scene walletScene = new Scene(walletView);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Wallet.fxml")); // Mettez à jour avec le chemin correct
+            Parent walletRoot = loader.load();
+
+            // Configurez le contrôleur WalletController si nécessaire
+            WalletController walletController = loader.getController();
+            walletController.setCurrentUser(currentUser);
+            walletController.initComponents();
+
+            // Chargez la vue dans la scène actuelle ou une nouvelle, selon vos besoins
+            Scene walletScene = new Scene(walletRoot);
+            Stage stage = (Stage) cryptoTable.getScene().getWindow(); // Récupérez la fenêtre actuelle
             stage.setScene(walletScene);
-            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            // Gestion des erreurs
+            // Gérez l'exception comme vous le jugez approprié
         }
     }
+
+
 
     @FXML
     protected void handleRefreshButtonAction(ActionEvent event) {
         startupManager.initializeApplicationData();
-        loadCryptoData();
+        setCryptoData(this.cryptoList);
     }
 }

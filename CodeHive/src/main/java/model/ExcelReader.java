@@ -94,6 +94,37 @@ public class ExcelReader {
         return userAssets;
     }
 
+    public Double readExcelNumericValue(String username,String columHeaderValue,String excelFilePath) throws Exception {
+        try (FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheet("Users");
+            int index = -1;
+            for(int i = 0; i<30;i++){
+                if(sheet.getRow(0).getCell(i) == null){
+                    continue;
+                }
+                if(sheet.getRow(0).getCell(i).getStringCellValue().equals(columHeaderValue)){
+                    index = i;
+                }
+            }
+            if (index==-1){
+                throw(new Exception("Value not found"));
+            }
+            for (Row row : sheet) {
+                Cell usernameCell = row.getCell(0);
+                if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
+                    if(row.getCell(index)==null){
+                        return 0d;
+                    }
+                    double value = row.getCell(index).getNumericCellValue();
+                    return value;
+                }
+            }
+
+        }
+        throw(new Exception("Value not found"));
+    }
+
 
 
 }
