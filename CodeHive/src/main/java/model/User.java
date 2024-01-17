@@ -58,37 +58,40 @@ public class User {
         String hashedPassword = hashPassword(password, salt);
 
         Workbook workbook = null;
+        FileInputStream is = null;
         FileOutputStream os = null;
 
         try {
             File file = new File(USERS_FILE);
             if (!file.exists()) {
                 workbook = new XSSFWorkbook();
-                workbook.createSheet();
+                Sheet sheet = workbook.createSheet("Users");
+                Row headerRow = sheet.createRow(0);
+                headerRow.createCell(0).setCellValue("Username");
+                headerRow.createCell(1).setCellValue("Password");
+                headerRow.createCell(2).setCellValue("Salt");
+                headerRow.createCell(3).setCellValue("Email");
+                headerRow.createCell(4).setCellValue("Balance Total");
+                headerRow.createCell(5).setCellValue("Balance Crypto");
+                headerRow.createCell(6).setCellValue("Balance Stocks");
+                headerRow.createCell(7).setCellValue("Balance Cash");
             } else {
-                InputStream is = new FileInputStream(USERS_FILE);
+                is = new FileInputStream(file);
                 workbook = new XSSFWorkbook(is);
-                is.close();
             }
 
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheet("Users");
             int rowCount = sheet.getLastRowNum();
             Row row = sheet.createRow(++rowCount);
 
-            Cell cellUsername = row.createCell(0);
-            cellUsername.setCellValue(username);
-
-            Cell cellPassword = row.createCell(1);
-            cellPassword.setCellValue(hashedPassword);
-
-            Cell cellSalt = row.createCell(2);
-            cellSalt.setCellValue(Base64.getEncoder().encodeToString(salt));
-
-            Cell cellEmail = row.createCell(3);
-            cellEmail.setCellValue(email);
-
-            Cell cellBalance = row.createCell(4);
-            cellBalance.setCellValue(100000.0); // Initialisation de la balance
+            row.createCell(0).setCellValue(username);
+            row.createCell(1).setCellValue(hashedPassword);
+            row.createCell(2).setCellValue(Base64.getEncoder().encodeToString(salt));
+            row.createCell(3).setCellValue(email);
+            row.createCell(4).setCellValue(100000.0); // Balance Total
+            row.createCell(5).setCellValue(0.0); // Balance Crypto
+            row.createCell(6).setCellValue(0.0); // Balance Stocks
+            row.createCell(7).setCellValue(100000.0); // Balance Cash
 
             os = new FileOutputStream(USERS_FILE);
             workbook.write(os);
@@ -99,12 +102,9 @@ public class User {
             return false;
         } finally {
             try {
-                if (os != null) {
-                    os.close();
-                }
-                if (workbook != null) {
-                    workbook.close();
-                }
+                if (workbook != null) workbook.close();
+                if (os != null) os.close();
+                if (is != null) is.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -9,35 +9,52 @@ public class TransactionManager {
     private CoinGeckoService coinGeckoService = new CoinGeckoService();
     private AlphaVantageService alphaVantageService = new AlphaVantageService();
 
-    public boolean executeTransaction(String username, String assetName, double amount, boolean isBuying, AssetType assetType) {
+    public boolean executeTransaction(String username, String assetName, double cashValue, boolean isBuying, AssetType assetType) {
         try {
-            double price = getCurrentPrice(assetName, assetType);
+            double assetPrice = getCurrentPrice(assetName, assetType);
+            double assetAmount = cashValue / assetPrice;
+
             Map<String, Double> userAssets = excelReader.readUserAssets(username, "./Files/users.xlsx");
-            double balance = userAssets.getOrDefault("balance", 0.0);
-            double assetQuantity = userAssets.getOrDefault(assetName, 0.0);
-            double transactionCost = price * amount;
+            double balanceTotal = userAssets.getOrDefault("balance_total", 0.0);
+            double balanceCrypto = userAssets.getOrDefault("balance_crypto", 0.0);
+            double balanceStocks = userAssets.getOrDefault("balance_stocks", 0.0);
+            double balanceCash = userAssets.getOrDefault("balance_cash", 0.0);
 
             if (isBuying) {
-                if (balance < transactionCost) {
-                    System.out.println("Fonds insuffisants pour l'achat.");
+                if (balanceCash < cashValue) {
+                    System.out.println("Insufficient funds for purchase.");
                     return false;
                 }
-                balance -= transactionCost;
-                assetQuantity += amount; // Augmentez la quantité de l'actif
+                balanceCash -= cashValue;
+                assetAmount += userAssets.getOrDefault(assetName, 0.0);
+                if (assetType == AssetType.CRYPTO) {
+                    balanceCrypto += cashValue;
+                } else {
+                    balanceStocks += cashValue;
+                }
             } else {
-                if (assetQuantity < amount) {
-                    System.out.println("Quantité d'actif insuffisante pour la vente.");
+                double currentAssetAmount = userAssets.getOrDefault(assetName, 0.0);
+                if (currentAssetAmount < assetAmount) {
+                    System.out.println("Insufficient asset quantity for sale.");
                     return false;
                 }
-                balance += transactionCost;
-                assetQuantity -= amount; // Diminuez la quantité de l'actif
+                balanceCash += cashValue;
+                assetAmount = currentAssetAmount - assetAmount;
+                if (assetType == AssetType.CRYPTO) {
+                    balanceCrypto -= cashValue;
+                } else {
+                    balanceStocks -= cashValue;
+                }
             }
 
-            // Mise à jour des actifs et du solde de l'utilisateur
-            userAssets.put("balance", balance);
-            userAssets.put(assetName, assetQuantity);
+            balanceTotal = balanceCash + balanceCrypto + balanceStocks;
 
-            // Enregistrez les nouvelles valeurs d'actifs dans le fichier Excel.
+            userAssets.put("balance_total", balanceTotal);
+            userAssets.put("balance_crypto", balanceCrypto);
+            userAssets.put("balance_stocks", balanceStocks);
+            userAssets.put("balance_cash", balanceCash);
+            userAssets.put(assetName, assetAmount);
+
             excelWriter.updateUserAssets(username, userAssets, "./Files/users.xlsx");
 
             return true;

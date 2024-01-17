@@ -57,25 +57,21 @@ public class ExcelReader {
         Map<String, Double> userAssets = new HashMap<>();
         try (FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
              Workbook workbook = new XSSFWorkbook(inputStream)) {
-            Sheet sheet = workbook.getSheet("Feuil1");
-            if (sheet == null) {
-                throw new IOException("Sheet 'Feuil1' does not exist in the workbook");
-            }
-
+            Sheet sheet = workbook.getSheet("Users"); // Assurez-vous que le nom de la feuille correspond.
+            // Reste du code...
             for (Row row : sheet) {
                 Cell usernameCell = row.getCell(0);
                 if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
-                    // Assurez-vous que la cellule de solde est au bon index
-                    Cell balanceCell = row.getCell(4); // index 4 pour la colonne E
-                    if (balanceCell != null && balanceCell.getCellType() == CellType.NUMERIC) {
-                        double balance = balanceCell.getNumericCellValue();
-                        userAssets.put("balance", balance);
-                        // Ajoutez ici la logique pour lire d'autres actifs si nécessaire
-                    }
+                    // Ici, lire toutes les balances et les mettre dans la carte.
+                    userAssets.put("balance_total", row.getCell(4).getNumericCellValue());
+                    userAssets.put("balance_crypto", row.getCell(5).getNumericCellValue());
+                    userAssets.put("balance_stocks", row.getCell(6).getNumericCellValue());
+                    userAssets.put("balance_cash", row.getCell(7).getNumericCellValue());
+                    // Continuez avec d'autres actifs si nécessaire...
                     break;
                 }
             }
-        } // try-with-resources fermera automatiquement les ressources
+        }
         return userAssets;
     }
 

@@ -64,15 +64,7 @@ public class ExcelWriter {
         try (FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
              Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
-            int userRowNum = -1;
-            // Trouver la ligne de l'utilisateur
-            for (Row row : sheet) {
-                Cell usernameCell = row.getCell(0);
-                if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
-                    userRowNum = row.getRowNum();
-                    break;
-                }
-            }
+            int userRowNum = findUserRow(sheet, username);
 
             if (userRowNum == -1) {
                 throw new IOException("User '" + username + "' not found in the workbook");
@@ -84,17 +76,13 @@ public class ExcelWriter {
                 double assetValue = entry.getValue();
 
                 int column = findColumnIndex(sheet, assetKey);
-                Cell cell;
                 if (column == -1) {
-                    // Si la colonne n'existe pas, créez une nouvelle cellule pour l'actif
                     column = userRow.getLastCellNum() >= 0 ? userRow.getLastCellNum() : 0;
                     sheet.getRow(0).createCell(column).setCellValue(assetKey);
+                }
+                Cell cell = userRow.getCell(column);
+                if (cell == null || cell.getCellType() != CellType.NUMERIC) {
                     cell = userRow.createCell(column, CellType.NUMERIC);
-                } else {
-                    cell = userRow.getCell(column);
-                    if (cell == null || cell.getCellType() != CellType.NUMERIC) {
-                        cell = userRow.createCell(column, CellType.NUMERIC);
-                    }
                 }
                 cell.setCellValue(assetValue);
             }
@@ -106,14 +94,25 @@ public class ExcelWriter {
         } // try-with-resources fermera automatiquement les ressources
     }
 
+    private int findUserRow(Sheet sheet, String username) {
+        for (Row row : sheet) {
+            Cell cell = row.getCell(0);
+            if (cell != null && cell.getCellType() == CellType.STRING && username.equals(cell.getStringCellValue())) {
+                return row.getRowNum();
+            }
+        }
+        return -1;
+    }
+
     private int findColumnIndex(Sheet sheet, String header) {
         Row headerRow = sheet.getRow(0);
         for (int columnIndex = 0; columnIndex < headerRow.getLastCellNum(); columnIndex++) {
             Cell cell = headerRow.getCell(columnIndex);
-            if (cell != null && cell.getCellType() == CellType.STRING && header.equals(cell.getStringCellValue())) {
+            if (cell != null && cell.getCellType() == CellType.STRING && header.equalsIgnoreCase(cell.getStringCellValue())) {
                 return columnIndex;
             }
         }
         return -1;
     }
+
 }

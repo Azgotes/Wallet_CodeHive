@@ -22,29 +22,35 @@ public class TransactionController {
 
     @FXML
     private void handleBuy() {
-        String assetName = txtAssetName.getText();
-        double amount = Double.parseDouble(txtAmount.getText());
-        AssetType assetType = determineAssetType(assetName);
-
-        if (currentUser != null && assetType != null) {
-            boolean success = transactionManager.executeTransaction(currentUser.getUsername(), assetName, amount, true, assetType);
-            lblStatus.setText(success ? "Achat réussi." : "Échec de l'achat.");
-        } else {
-            lblStatus.setText("Échec de la transaction. Vérifiez le nom de l'actif et le type.");
+        try {
+            String assetName = txtAssetName.getText();
+            double cashAmount = Double.parseDouble(txtAmount.getText());
+            AssetType assetType = determineAssetType(assetName);
+            if (currentUser != null && assetType != null) {
+                boolean success = transactionManager.executeTransaction(currentUser.getUsername(), assetName, cashAmount, true, assetType);
+                lblStatus.setText(success ? "Purchase successful." : "Purchase failed.");
+            } else {
+                lblStatus.setText("Transaction failed. Check asset name and type.");
+            }
+        } catch (NumberFormatException e) {
+            lblStatus.setText("Invalid amount format.");
         }
     }
 
     @FXML
     private void handleSell() {
-        String assetName = txtAssetName.getText();
-        double amount = Double.parseDouble(txtAmount.getText());
-        AssetType assetType = determineAssetType(assetName);
-
-        if (currentUser != null && assetType != null) {
-            boolean success = transactionManager.executeTransaction(currentUser.getUsername(), assetName, amount, false, assetType);
-            lblStatus.setText(success ? "Vente réussie." : "Échec de la vente.");
-        } else {
-            lblStatus.setText("Échec de la transaction. Vérifiez le nom de l'actif et le type.");
+        try {
+            String assetName = txtAssetName.getText();
+            double cashAmount = Double.parseDouble(txtAmount.getText());
+            AssetType assetType = determineAssetType(assetName);
+            if (currentUser != null && assetType != null) {
+                boolean success = transactionManager.executeTransaction(currentUser.getUsername(), assetName, cashAmount, false, assetType);
+                lblStatus.setText(success ? "Sale successful." : "Sale failed.");
+            } else {
+                lblStatus.setText("Transaction failed. Check asset name and type.");
+            }
+        } catch (NumberFormatException e) {
+            lblStatus.setText("Invalid amount format.");
         }
     }
 
