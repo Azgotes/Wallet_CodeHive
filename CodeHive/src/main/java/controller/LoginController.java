@@ -28,11 +28,17 @@ public class LoginController {
 
         if (userService.authenticate(username, password)) {
             try {
-                // Chargez la vue Wallet après une connexion réussie
-                Parent walletView = FXMLLoader.load(getClass().getResource("/fxml/Wallet.fxml"));
+                // Utilisez le FXMLLoader pour charger la vue Wallet
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Wallet.fxml"));
+                Parent walletView = loader.load();
+
+                // Obtenez le WalletController et définissez l'utilisateur actuel
+                WalletController walletController = loader.getController();
+                walletController.setCurrentUser(userService); // userService contient maintenant l'utilisateur authentifié
+
+                // Affichez la vue Wallet
                 Scene walletScene = new Scene(walletView);
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
                 stage.setScene(walletScene);
                 stage.setTitle("My Wallet");
                 stage.show();
@@ -44,6 +50,7 @@ public class LoginController {
             lblStatus.setText("Login failed.");
         }
     }
+
     @FXML
     private void handleSignUp(ActionEvent event) {
         try {

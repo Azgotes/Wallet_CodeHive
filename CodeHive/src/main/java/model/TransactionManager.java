@@ -12,31 +12,32 @@ public class TransactionManager {
     public boolean executeTransaction(String username, String assetName, double amount, boolean isBuying, AssetType assetType) {
         try {
             double price = getCurrentPrice(assetName, assetType);
-
             Map<String, Double> userAssets = excelReader.readUserAssets(username, "./Files/users.xlsx");
-            double balance = userAssets.getOrDefault("balance", 100000.0);
+            double balance = userAssets.getOrDefault("balance", 0.0);
             double assetQuantity = userAssets.getOrDefault(assetName, 0.0);
-
             double transactionCost = price * amount;
 
             if (isBuying) {
                 if (balance < transactionCost) {
-                    System.out.println("Insufficient funds.");
+                    System.out.println("Fonds insuffisants pour l'achat.");
                     return false;
                 }
                 balance -= transactionCost;
-                assetQuantity += amount;
+                assetQuantity += amount; // Augmentez la quantité de l'actif
             } else {
                 if (assetQuantity < amount) {
-                    System.out.println("Insufficient asset quantity.");
+                    System.out.println("Quantité d'actif insuffisante pour la vente.");
                     return false;
                 }
                 balance += transactionCost;
-                assetQuantity -= amount;
+                assetQuantity -= amount; // Diminuez la quantité de l'actif
             }
 
+            // Mise à jour des actifs et du solde de l'utilisateur
             userAssets.put("balance", balance);
             userAssets.put(assetName, assetQuantity);
+
+            // Enregistrez les nouvelles valeurs d'actifs dans le fichier Excel.
             excelWriter.updateUserAssets(username, userAssets, "./Files/users.xlsx");
 
             return true;
@@ -45,6 +46,8 @@ public class TransactionManager {
             return false;
         }
     }
+
+
 
     private double getCurrentPrice(String assetName, AssetType assetType) {
         try {
@@ -61,5 +64,4 @@ public class TransactionManager {
         }
     }
 
-    // Other helper methods for ExcelReader and ExcelWriter...
 }

@@ -53,37 +53,28 @@ public class User {
             return false;
         }
 
-        // Génération du sel aléatoire
         byte[] salt = new byte[16];
         RANDOM.nextBytes(salt);
-        // Hashage du mot de passe avec le sel
         String hashedPassword = hashPassword(password, salt);
 
         Workbook workbook = null;
         FileOutputStream os = null;
 
         try {
-            // Vérification de l'existence du fichier
             File file = new File(USERS_FILE);
             if (!file.exists()) {
-                // Si le fichier n'existe pas, on le crée
                 workbook = new XSSFWorkbook();
                 workbook.createSheet();
             } else {
-                // Si le fichier existe, on l'ouvre
                 InputStream is = new FileInputStream(USERS_FILE);
                 workbook = new XSSFWorkbook(is);
-                is.close(); //ferme le flux
+                is.close();
             }
 
-            // Accès ou création de la feuille de travail dans l'Excel
             Sheet sheet = workbook.getSheetAt(0);
-
-            // Création d'une nouvelle ligne pour l'utilisateur
             int rowCount = sheet.getLastRowNum();
             Row row = sheet.createRow(++rowCount);
 
-            // Création des cellules pour les données utilisateur
             Cell cellUsername = row.createCell(0);
             cellUsername.setCellValue(username);
 
@@ -96,17 +87,17 @@ public class User {
             Cell cellEmail = row.createCell(3);
             cellEmail.setCellValue(email);
 
-            // Écriture dans le fichier Excel
+            Cell cellBalance = row.createCell(4);
+            cellBalance.setCellValue(100000.0); // Initialisation de la balance
+
             os = new FileOutputStream(USERS_FILE);
             workbook.write(os);
 
-            // Retourne true si l'utilisateur a été enregistré avec succès
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         } finally {
-            // Fermeture des ressources dans le bloc finally pour s'assurer qu'elles sont toujours fermées
             try {
                 if (os != null) {
                     os.close();

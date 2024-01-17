@@ -61,50 +61,56 @@ public class ExcelWriter {
     }
 
     public void updateUserAssets(String username, Map<String, Double> assets, String excelFilePath) throws IOException {
-        FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
-        Workbook workbook = new XSSFWorkbook(inputStream);
-        Sheet sheet = workbook.getSheet("Users");
-        if (sheet == null) {
-            throw new IOException("Sheet 'Users' does not exist in the workbook");
-        }
-
-        int userRowNum = -1;
-        for (Row row : sheet) {
-            Cell usernameCell = row.getCell(0);
-            if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
-                userRowNum = row.getRowNum();
-                break;
+        try (FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            int userRowNum = -1;
+            // Trouver la ligne de l'utilisateur
+            for (Row row : sheet) {
+                Cell usernameCell = row.getCell(0);
+                if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
+                    userRowNum = row.getRowNum();
+                    break;
+                }
             }
-        }
 
-        if (userRowNum == -1) {
-            throw new IOException("User '" + username + "' not found in the workbook");
-        }
-
-        Row userRow = sheet.getRow(userRowNum);
-        for (Map.Entry<String, Double> entry : assets.entrySet()) {
-            int column = findColumnIndex(sheet, entry.getKey(), 4); // Recherche à partir de la 5ème colonne
-            if (column == -1) {
-                throw new IOException("Asset '" + entry.getKey() + "' not found in the workbook");
+            if (userRowNum == -1) {
+                throw new IOException("User '" + username + "' not found in the workbook");
             }
-            Cell cell = userRow.createCell(column, CellType.NUMERIC);
-            cell.setCellValue(entry.getValue());
-        }
 
-        inputStream.close();
+            Row userRow = sheet.getRow(userRowNum);
+            for (Map.Entry<String, Double> entry : assets.entrySet()) {
+                String assetKey = entry.getKey();
+                double assetValue = entry.getValue();
 
-        try (FileOutputStream outputStream = new FileOutputStream(new File(excelFilePath))) {
-            workbook.write(outputStream);
-        } finally {
-            workbook.close();
-        }
+                int column = findColumnIndex(sheet, assetKey);
+                Cell cell;
+                if (column == -1) {
+                    // Si la colonne n'existe pas, créez une nouvelle cellule pour l'actif
+                    column = userRow.getLastCellNum() >= 0 ? userRow.getLastCellNum() : 0;
+                    sheet.getRow(0).createCell(column).setCellValue(assetKey);
+                    cell = userRow.createCell(column, CellType.NUMERIC);
+                } else {
+                    cell = userRow.getCell(column);
+                    if (cell == null || cell.getCellType() != CellType.NUMERIC) {
+                        cell = userRow.createCell(column, CellType.NUMERIC);
+                    }
+                }
+                cell.setCellValue(assetValue);
+            }
+
+            // Écriture des modifications dans le fichier
+            try (FileOutputStream outputStream = new FileOutputStream(excelFilePath)) {
+                workbook.write(outputStream);
+            }
+        } // try-with-resources fermera automatiquement les ressources
     }
 
-    private int findColumnIndex(Sheet sheet, String header, int startColumn) {
+    private int findColumnIndex(Sheet sheet, String header) {
         Row headerRow = sheet.getRow(0);
-        for (int columnIndex = startColumn; columnIndex < headerRow.getLastCellNum(); columnIndex++) {
+        for (int columnIndex = 0; columnIndex < headerRow.getLastCellNum(); columnIndex++) {
             Cell cell = headerRow.getCell(columnIndex);
-            if (cell != null && cell.getStringCellValue().equals(header)) {
+            if (cell != null && cell.getCellType() == CellType.STRING && header.equals(cell.getStringCellValue())) {
                 return columnIndex;
             }
         }

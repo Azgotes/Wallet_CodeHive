@@ -55,33 +55,29 @@ public class ExcelReader {
 
     public Map<String, Double> readUserAssets(String username, String excelFilePath) throws IOException {
         Map<String, Double> userAssets = new HashMap<>();
-        FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
-
-        Workbook workbook = new XSSFWorkbook(inputStream);
-        Sheet sheet = workbook.getSheet("/Files/Users.xlsx");
-        if (sheet == null) {
-            throw new IOException("Sheet 'Users' does not exist in the workbook");
-        }
-
-        for (Row row : sheet) {
-            Cell usernameCell = row.getCell(0);
-            if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
-                // Les actifs commencent à la 5ème colonne (index 4)
-                for (int columnIndex = 4; columnIndex < row.getLastCellNum(); columnIndex++) {
-                    Cell assetCell = row.getCell(columnIndex);
-                    if (assetCell != null && assetCell.getCellType() == CellType.NUMERIC) {
-                        String assetName = sheet.getRow(0).getCell(columnIndex).getStringCellValue();
-                        double assetValue = assetCell.getNumericCellValue();
-                        userAssets.put(assetName, assetValue);
-                    }
-                }
-                break;
+        try (FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheet("Feuil1");
+            if (sheet == null) {
+                throw new IOException("Sheet 'Feuil1' does not exist in the workbook");
             }
-        }
 
-        workbook.close();
-        inputStream.close();
-
+            for (Row row : sheet) {
+                Cell usernameCell = row.getCell(0);
+                if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
+                    // Assurez-vous que la cellule de solde est au bon index
+                    Cell balanceCell = row.getCell(4); // index 4 pour la colonne E
+                    if (balanceCell != null && balanceCell.getCellType() == CellType.NUMERIC) {
+                        double balance = balanceCell.getNumericCellValue();
+                        userAssets.put("balance", balance);
+                        // Ajoutez ici la logique pour lire d'autres actifs si nécessaire
+                    }
+                    break;
+                }
+            }
+        } // try-with-resources fermera automatiquement les ressources
         return userAssets;
     }
+
+
 }

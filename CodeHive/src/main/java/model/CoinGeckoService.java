@@ -15,7 +15,7 @@ import java.util.Map;
 public class CoinGeckoService {
 
     private static final String COINGECKO_API_URL = "https://api.coingecko.com/api/v3/";
-    private static final String API_KEY = "CG-iX3qPUyNu3gXTELkh24958rh"; // Votre clé API
+    private static final String API_KEY = "CG-iX3qPUyNu3gXTELkh24958rh"; //clé API
     private long lastRequestTime = 0;
     private static final long REQUEST_INTERVAL = 2000; // 2 secondes entre les requêtes
 

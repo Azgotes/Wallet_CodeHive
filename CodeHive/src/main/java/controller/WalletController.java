@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.Parent;
+import model.User;
 
 import java.io.IOException;
 
@@ -51,6 +52,9 @@ public class WalletController {
     private static final double EXPANDED_POSITION = 0.2;
     private static final Duration ANIMATION_DURATION = Duration.millis(300);
 
+    private User currentUser;
+
+
     @FXML
     public void initialize() {
         // Initialiser le graphique de solde
@@ -70,6 +74,11 @@ public class WalletController {
         // Initialiser le tableau des actions
         // ...
     }
+
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
+
 
     @FXML
     public void handleMenuItem1(ActionEvent actionEvent) {
@@ -127,17 +136,20 @@ public class WalletController {
     @FXML
     private void handleMenuItem2() {
         try {
-            Parent transactionRoot = FXMLLoader.load(getClass().getResource("/fxml/transaction.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Transaction.fxml"));
+            Parent transactionRoot = loader.load();
+            TransactionController transactionController = loader.getController();
+            transactionController.setCurrentUser(currentUser); // Assurez-vous d'avoir cette méthode dans TransactionController
+
             Scene transactionScene = new Scene(transactionRoot);
-            Stage transactionStage = new Stage();
-            transactionStage.setTitle("Transactions");
+            Stage transactionStage = (Stage) splitPane.getScene().getWindow(); // Utilisez la fenêtre actuelle ou une nouvelle si nécessaire
             transactionStage.setScene(transactionScene);
             transactionStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
+
 
     public void handleMenuItem3(ActionEvent actionEvent) {
     }
