@@ -17,8 +17,8 @@ public class TransactionController {
     private TransactionManager transactionManager = new TransactionManager();
     private User currentUser;
 
-    private static final Set<String> knownCryptocurrencies = Set.of("bitcoin", "ethereum", "ripple" /* autres crypto-monnaies */);
-    private static final Set<String> knownStocks = Set.of("AAPL", "MSFT", "GOOGL" /* autres symboles d'actions */);
+    private static final Set<String> knownCryptocurrencies = Set.of("bitcoin", "ethereum", "ripple","staked-ether","tether","cardano","binancecoin","solana","usd-coin","avalanche-2"/* autres crypto-monnaies */);
+    private static final Set<String> knownStocks = Set.of("AAPL", "MSFT", "GOOGL","NFLX","NVDA","TSLA","INTC","AMD","AMZN" /* autres symboles d'actions */);
 
     @FXML
     private void handleBuy() {

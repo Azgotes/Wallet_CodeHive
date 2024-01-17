@@ -34,16 +34,29 @@ public class TransactionManager {
                 }
             } else {
                 double currentAssetAmount = userAssets.getOrDefault(assetName, 0.0);
+                double assetValueToSell = assetAmount * assetPrice; // Valeur monétaire de la quantité à vendre
+
+                System.out.println("Attempting to sell: " + assetAmount + " of " + assetName);
+                System.out.println("Current asset amount: " + currentAssetAmount);
+                System.out.println("Asset price: " + assetPrice);
+                System.out.println("Asset value to sell: " + assetValueToSell);
+                System.out.println("User's cash before sale: " + balanceCash);
+
                 if (currentAssetAmount < assetAmount) {
                     System.out.println("Insufficient asset quantity for sale.");
                     return false;
                 }
-                balanceCash += cashValue;
+
+                balanceCash += assetValueToSell;
                 assetAmount = currentAssetAmount - assetAmount;
+
+                System.out.println("User's cash after sale: " + balanceCash);
+                System.out.println("New asset amount: " + assetAmount);
+
                 if (assetType == AssetType.CRYPTO) {
-                    balanceCrypto -= cashValue;
+                    balanceCrypto -= assetValueToSell; // Ici, on déduit la valeur monétaire, pas la quantité
                 } else {
-                    balanceStocks -= cashValue;
+                    balanceStocks -= assetValueToSell; // De même pour les stocks
                 }
             }
 
@@ -64,8 +77,6 @@ public class TransactionManager {
         }
     }
 
-
-
     private double getCurrentPrice(String assetName, AssetType assetType) {
         try {
             double price;
@@ -80,5 +91,4 @@ public class TransactionManager {
             return -1;
         }
     }
-
 }

@@ -57,23 +57,43 @@ public class ExcelReader {
         Map<String, Double> userAssets = new HashMap<>();
         try (FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
              Workbook workbook = new XSSFWorkbook(inputStream)) {
-            Sheet sheet = workbook.getSheet("Users"); // Assurez-vous que le nom de la feuille correspond.
-            // Reste du code...
+            Sheet sheet = workbook.getSheet("Users");
             for (Row row : sheet) {
                 Cell usernameCell = row.getCell(0);
                 if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
-                    // Ici, lire toutes les balances et les mettre dans la carte.
-                    userAssets.put("balance_total", row.getCell(4).getNumericCellValue());
-                    userAssets.put("balance_crypto", row.getCell(5).getNumericCellValue());
-                    userAssets.put("balance_stocks", row.getCell(6).getNumericCellValue());
-                    userAssets.put("balance_cash", row.getCell(7).getNumericCellValue());
-                    // Continuez avec d'autres actifs si nécessaire...
+                    // Lecture et affichage des balances pour le débogage
+                    double balanceTotal = row.getCell(4).getNumericCellValue();
+                    double balanceCrypto = row.getCell(5).getNumericCellValue();
+                    double balanceStocks = row.getCell(6).getNumericCellValue();
+                    double balanceCash = row.getCell(7).getNumericCellValue();
+
+                    System.out.println("Balance total read: " + balanceTotal);
+                    System.out.println("Balance crypto read: " + balanceCrypto);
+                    System.out.println("Balance stocks read: " + balanceStocks);
+                    System.out.println("Balance cash read: " + balanceCash);
+
+                    userAssets.put("balance_total", balanceTotal);
+                    userAssets.put("balance_crypto", balanceCrypto);
+                    userAssets.put("balance_stocks", balanceStocks);
+                    userAssets.put("balance_cash", balanceCash);
+
+                    // Lecture des quantités d'actifs spécifiques pour le débogage
+                    for (int i = 8; i < row.getLastCellNum(); i++) {
+                        Cell cell = row.getCell(i);
+                        if (cell != null && cell.getCellType() == CellType.NUMERIC) {
+                            String assetKey = sheet.getRow(0).getCell(i).getStringCellValue();
+                            double assetAmount = cell.getNumericCellValue();
+                            System.out.println("Asset read: " + assetKey + " Amount: " + assetAmount);
+                            userAssets.put(assetKey, assetAmount);
+                        }
+                    }
                     break;
                 }
             }
         }
         return userAssets;
     }
+
 
 
 }
