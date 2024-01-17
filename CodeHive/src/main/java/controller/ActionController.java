@@ -3,13 +3,21 @@ package controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.event.ActionEvent;
+import javafx.stage.Stage;
 import model.Action;
-import model.AlphaVantageService;
-import org.json.JSONObject;
+import model.ExcelReader;
+import model.StartupManager;
+
+import java.io.IOException;
+import java.util.Map;
 
 public class ActionController {
 
@@ -21,17 +29,15 @@ public class ActionController {
 
     @FXML
     private TableColumn<Action, Double> priceColumn;
+    private final StartupManager startupManager = new StartupManager();
 
-    @FXML
-    private TableColumn<Action, Double> volumeColumn;
 
-    private final AlphaVantageService alphaVantageService = new AlphaVantageService();
+    private final ExcelReader excelReader = new ExcelReader();
 
     @FXML
     public void initialize() {
         symbolColumn.setCellValueFactory(new PropertyValueFactory<>("symbol"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-        volumeColumn.setCellValueFactory(new PropertyValueFactory<>("volume"));
 
         loadActionData();
     }
@@ -39,42 +45,39 @@ public class ActionController {
     private void loadActionData() {
         ObservableList<Action> actions = FXCollections.observableArrayList();
 
-        String[] symbols = {"AAPL", "MSFT", "GOOGL", "TSLA", "AMZN", "NVDA", "NFLX", "INTC", "AMD"};
-
-        for (String symbol : symbols) {
-            String rawData = alphaVantageService.getStockData(symbol);
-
-            if (rawData != null) {
-                JSONObject jsonObject = new JSONObject(rawData);
-
-                if (jsonObject.has("Time Series (Daily)")) {
-                    JSONObject timeSeries = jsonObject.getJSONObject("Time Series (Daily)");
-
-                    // Itérez sur les données ici
-                    for (String date : timeSeries.keySet()) {
-                        JSONObject dailyData = timeSeries.getJSONObject(date);
-                        Action action = new Action(
-                                symbol, // Utilisez le symbole actuel de la boucle
-                                dailyData.getDouble("4. close"),
-                                dailyData.getDouble("5. volume")
-                        );
-                        actions.add(action);
-                        break; // Actuellement, nous ajoutons uniquement le dernier point de données
-                    }
-                } else {
-                    System.out.println("Clé 'Time Series (Daily)' non trouvée dans les données JSON pour le symbole " + symbol);
-                }
-            } else {
-                System.out.println("Les données brutes (rawData) sont nulles pour le symbole " + symbol);
-            }
+        try {
+            Map<String, Double> prices = excelReader.readPrices("./Files/ActionCrypto.xlsx", "Stocks");
+            prices.forEach((symbol, price) -> {
+                actions.add(new Action(symbol, price));
+            });
+            actionTable.setItems(actions);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the exception, possibly with a user alert
         }
-
-        actionTable.setItems(actions);
     }
 
+    @FXML
+    protected void handleBackButtonAction(ActionEvent event) {
+        navigateToWallet(event);
+    }
+
+    private void navigateToWallet(ActionEvent event) {
+        try {
+            Parent walletView = FXMLLoader.load(getClass().getResource("/fxml/Wallet.fxml"));
+            Scene walletScene = new Scene(walletView);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(walletScene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gestion des erreurs
+        }
+    }
 
     @FXML
     protected void handleRefreshButtonAction(ActionEvent event) {
+        startupManager.initializeApplicationData();
         loadActionData();
     }
 }

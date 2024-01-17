@@ -10,8 +10,8 @@
         <columns>
             <TableColumn fx:id="nameColumn" text="Name" prefWidth="100.0"/>
             <TableColumn fx:id="priceColumn" text="Price" prefWidth="100.0"/>
-            <TableColumn fx:id="marketCapColumn" text="Market Cap" prefWidth="100.0"/>
         </columns>
     </TableView>
     <Button layoutX="14.0" layoutY="220.0" text="Refresh" fx:id="refreshButton" onAction="#handleRefreshButtonAction"/>
+    <Button layoutX="14.0" layoutY="250.0" text="Retour à la page principale" fx:id="backButton" onAction="#handleBackButtonAction"/>
 </AnchorPane>

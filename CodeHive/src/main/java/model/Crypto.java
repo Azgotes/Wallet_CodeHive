@@ -3,12 +3,10 @@ package model;
 public class Crypto {
     private String name;
     private Double price;
-    private Double marketCap;
 
-    public Crypto(String name, Double price, Double marketCap) {
+    public Crypto(String name, Double price) {
         this.name = name;
         this.price = price;
-        this.marketCap = marketCap;
     }
 
     // Getters and setters
@@ -28,11 +26,4 @@ public class Crypto {
         this.price = price;
     }
 
-    public Double getMarketCap() {
-        return marketCap;
-    }
-
-    public void setMarketCap(Double marketCap) {
-        this.marketCap = marketCap;
-    }
 }

@@ -6,7 +6,12 @@ import javafx.scene.control.Label;
 import model.TransactionManager;
 import model.User;
 import model.AssetType;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.Set;
 
 public class TransactionController {
@@ -66,5 +71,25 @@ public class TransactionController {
 
     public void setCurrentUser(User user) {
         this.currentUser = user;
+    }
+
+    @FXML
+    private void handleBack() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Wallet.fxml")); // Mettez à jour avec le chemin correct
+            Parent walletRoot = loader.load();
+
+            // Configurez le contrôleur WalletController si nécessaire
+            WalletController walletController = loader.getController();
+            walletController.setCurrentUser(currentUser);
+
+            // Chargez la vue dans la scène actuelle ou une nouvelle, selon vos besoins
+            Scene walletScene = new Scene(walletRoot);
+            Stage stage = (Stage) txtAssetName.getScene().getWindow(); // Récupérez la fenêtre actuelle
+            stage.setScene(walletScene);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gérez l'exception comme vous le jugez approprié
+        }
     }
 }

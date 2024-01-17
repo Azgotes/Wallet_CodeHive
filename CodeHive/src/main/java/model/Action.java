@@ -3,12 +3,10 @@ package model;
 public class Action {
     private String symbol;
     private Double price;
-    private Double volume;
 
-    public Action(String symbol, Double price, Double volume) {
+    public Action(String symbol, Double price) {
         this.symbol = symbol;
         this.price = price;
-        this.volume = volume;
     }
 
     // Getters and setters
@@ -28,11 +26,4 @@ public class Action {
         this.price = price;
     }
 
-    public Double getVolume() {
-        return volume;
-    }
-
-    public void setVolume(Double volume) {
-        this.volume = volume;
-    }
 }

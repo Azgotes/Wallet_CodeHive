@@ -66,6 +66,7 @@ public class WalletController {
         // Initialiser le diagramme de répartition des actifs
         PieChart.Data slice1 = new PieChart.Data("Crypto", 86.2);
         PieChart.Data slice2 = new PieChart.Data("Action", 13.8);
+
         assetDistributionChart.getData().addAll(slice1, slice2);
 
         // Initialiser le tableau des cryptomonnaies
@@ -151,10 +152,46 @@ public class WalletController {
     }
 
 
+    @FXML
     public void handleMenuItem3(ActionEvent actionEvent) {
+        // Chargement et affichage du tableau d'actions
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Action.fxml")); // Assurez-vous que le chemin est correct
+            Parent actionView = loader.load();
+
+            // Configurez le contrôleur ActionController si nécessaire
+            ActionController actionController = loader.getController();
+            // actionController.set... // Configurez avec les données nécessaires
+
+            Scene actionScene = new Scene(actionView);
+            Stage stage = (Stage) splitPane.getScene().getWindow();
+            stage.setScene(actionScene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gestion des erreurs
+        }
     }
 
+    @FXML
     public void handleMenuItem4(ActionEvent actionEvent) {
+        // Chargement et affichage du tableau de cryptomonnaies
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Crypto.fxml")); // Assurez-vous que le chemin est correct
+            Parent cryptoView = loader.load();
+
+            // Configurez le contrôleur CryptoController si nécessaire
+            CryptoController cryptoController = loader.getController();
+            // cryptoController.set... // Configurez avec les données nécessaires
+
+            Scene cryptoScene = new Scene(cryptoView);
+            Stage stage = (Stage) splitPane.getScene().getWindow();
+            stage.setScene(cryptoScene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gestion des erreurs
+        }
     }
 
     public void handleMenuItem5(ActionEvent actionEvent) {

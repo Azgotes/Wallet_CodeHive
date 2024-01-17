@@ -8,5 +8,6 @@
     <TextField fx:id="txtAmount" promptText="Montant" style="-fx-pref-width: 200;"/>
     <Button text="Acheter" onAction="#handleBuy" style="-fx-background-color: #007bff; -fx-text-fill: white;"/>
     <Button text="Vendre" onAction="#handleSell" style="-fx-background-color: #dc3545; -fx-text-fill: white;"/>
+    <Button text="Retour" onAction="#handleBack" style="-fx-background-color: #6c757d; -fx-text-fill: white;"/> <!-- Bouton ajouté -->
     <Label fx:id="lblStatus" textFill="red"/>
 </VBox>

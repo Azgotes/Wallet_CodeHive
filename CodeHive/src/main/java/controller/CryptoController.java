@@ -3,14 +3,21 @@ package controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.event.ActionEvent;
+import javafx.stage.Stage;
 import model.Crypto;
-import model.CoinGeckoService;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import model.ExcelReader;
+import model.StartupManager;
+
+import java.io.IOException;
+import java.util.Map;
 
 public class CryptoController {
 
@@ -23,44 +30,55 @@ public class CryptoController {
     @FXML
     private TableColumn<Crypto, Double> priceColumn;
 
-    @FXML
-    private TableColumn<Crypto, Double> marketCapColumn;
+    private final ExcelReader excelReader = new ExcelReader();
 
-    private final CoinGeckoService coinGeckoService = new CoinGeckoService();
+    private final StartupManager startupManager = new StartupManager();
+
 
     @FXML
     public void initialize() {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-        marketCapColumn.setCellValueFactory(new PropertyValueFactory<>("marketCap"));
 
-        // Load initial data
         loadCryptoData();
     }
 
     private void loadCryptoData() {
-        String rawData = coinGeckoService.getCryptoData();
-        System.out.println(rawData);
         ObservableList<Crypto> cryptos = FXCollections.observableArrayList();
 
-        if (rawData != null) {
-            JSONArray jsonArray = new JSONArray(rawData);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                Crypto crypto = new Crypto(
-                        jsonObject.getString("name"),
-                        jsonObject.getDouble("current_price"),
-                        jsonObject.getDouble("market_cap")
-                );
-                cryptos.add(crypto);
-            }
+        try {
+            Map<String, Double> prices = excelReader.readPrices("./Files/ActionCrypto.xlsx", "Cryptocurrencies");
+            prices.forEach((name, price) -> {
+                cryptos.add(new Crypto(name, price));
+            });
+            cryptoTable.setItems(cryptos);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the exception, possibly with a user alert
         }
+    }
 
-        cryptoTable.setItems(cryptos);
+    @FXML
+    protected void handleBackButtonAction(ActionEvent event) {
+        navigateToWallet(event);
+    }
+
+    private void navigateToWallet(ActionEvent event) {
+        try {
+            Parent walletView = FXMLLoader.load(getClass().getResource("/fxml/Wallet.fxml"));
+            Scene walletScene = new Scene(walletView);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(walletScene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gestion des erreurs
+        }
     }
 
     @FXML
     protected void handleRefreshButtonAction(ActionEvent event) {
+        startupManager.initializeApplicationData();
         loadCryptoData();
     }
 }
