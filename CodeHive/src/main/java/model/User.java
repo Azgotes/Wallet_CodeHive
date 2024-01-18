@@ -116,10 +116,10 @@ public class User {
             row.createCell(1).setCellValue(hashedPassword);
             row.createCell(2).setCellValue(Base64.getEncoder().encodeToString(salt));
             row.createCell(3).setCellValue(email);
-            row.createCell(4).setCellValue(100000.0); // Balance Total
+            row.createCell(4).setCellValue(0.0); // Balance Total
             row.createCell(5).setCellValue(0.0); // Balance Crypto
             row.createCell(6).setCellValue(0.0); // Balance Stocks
-            row.createCell(7).setCellValue(100000.0); // Balance Cash
+            row.createCell(7).setCellValue(0.0); // Balance Cash
 
             os = new FileOutputStream(USERS_FILE);
             workbook.write(os);

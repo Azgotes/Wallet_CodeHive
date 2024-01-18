@@ -50,7 +50,7 @@
                </Label>
                 </VBox>
                 <VBox alignment="TOP_CENTER" spacing="10">
-                    <Label text="Action" />
+                    <Label text="Diagramme" />
                     <PieChart fx:id="assetDistributionChart" prefHeight="300" prefWidth="300" />
                 </VBox>
             </HBox>
