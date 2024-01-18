@@ -93,8 +93,17 @@ public class CoinGeckoService {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Gérer le cas où la réponse n'est pas un objet JSON
             JSONObject jsonResponse = new JSONObject(response.body());
-            return jsonResponse.getJSONObject(cryptoId).getDouble("usd");
+
+            // Gérer le cas où la clé spécifiée n'existe pas dans l'objet JSON
+            if (jsonResponse.has(cryptoId)) {
+                return jsonResponse.getJSONObject(cryptoId).getDouble("usd");
+            } else {
+                System.out.println("La clé '" + cryptoId + "' n'a pas été trouvée dans la réponse JSON.");
+                return -1;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
