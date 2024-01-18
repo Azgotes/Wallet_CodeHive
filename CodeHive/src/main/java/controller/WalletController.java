@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class WalletController {
 
@@ -171,7 +173,43 @@ public class WalletController {
         this.actionTable.setItems(listAction);
 
     }
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        // Afficher une boîte de dialogue de confirmation
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to logout?");
 
+        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        // Si l'utilisateur clique sur "Yes", déconnectez-vous
+        if (result.isPresent() && result.get() == yesButton) {
+            // Ajoutez ici le code pour déconnecter l'utilisateur, par exemple, en redirigeant vers la page de connexion.
+            redirectToLoginPage(event);
+        }
+        // Sinon, l'utilisateur a choisi "No", ne faites rien
+    }
+
+    private void redirectToLoginPage(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
+            Parent loginView = loader.load();
+            Scene loginScene = new Scene(loginView);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+            stage.setScene(loginScene);
+            stage.setTitle("Login");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     @FXML
     public void handleMenuItem1(ActionEvent actionEvent) {
         // Code pour le menu item 1

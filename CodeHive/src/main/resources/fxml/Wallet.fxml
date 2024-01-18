@@ -17,6 +17,8 @@
             <Button onAction="#handleMenuItem3" text="Action" />
             <Button onAction="#handleMenuItem4" text="Crypto" />
             <Button onAction="#handleMenuItem5" text="Recharge Cash" />
+            <Button onAction="#handleLogout" text="Logout" />
+
         </VBox>
 
         <VBox fx:id="mainContainer" alignment="TOP_CENTER" spacing="20">

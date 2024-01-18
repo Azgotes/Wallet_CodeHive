@@ -13,6 +13,8 @@ import javafx.stage.Stage;
 import model.User;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SignUpController {
     // Déclaration des composants de l'interface utilisateur annotés avec @FXML.
@@ -27,20 +29,60 @@ public class SignUpController {
     // Méthode pour gérer l'action d'inscription.
     @FXML
     private void handleSignUp(ActionEvent event) {
-        // Récupération des valeurs entrées par l'utilisateur.
         String newUsername = txtNewUsername.getText();
         String newPassword = txtNewPassword.getText();
-        String email = txtNewEmail.getText(); // Récupération de l'email
+        String email = txtNewEmail.getText();
 
-        // Tentative d'inscription de l'utilisateur avec les informations fournies.
+        // Vérifier que le mot de passe a au moins une majuscule, une minuscule et un chiffre
+        if (!isValidPassword(newPassword)) {
+            lblNewUserStatus.setText("Password must contain at least one uppercase letter, one lowercase letter, and one digit.");
+            return;
+        }
+
+        // Vérifier que l'email est correct
+        if (!isValidEmail(email)) {
+            lblNewUserStatus.setText("Invalid email address.");
+            return;
+        }
+
+        // Appel de la méthode registerUser avec le nom, prénom, etc.
         if (userService.registerUser(newUsername, newPassword, email)) {
-            // En cas de succès, afficher un message de réussite.
             lblNewUserStatus.setText("User registered successfully.");
         } else {
-            // En cas d'échec, afficher un message d'erreur.
             lblNewUserStatus.setText("Registration failed. User may already exist.");
         }
     }
+
+    private boolean isValidPassword(String password) {
+        // Vérifier la présence d'au moins une majuscule, une minuscule et un chiffre
+        boolean containsUppercase = false;
+        boolean containsLowercase = false;
+        boolean containsDigit = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                containsUppercase = true;
+            } else if (Character.isLowerCase(c)) {
+                containsLowercase = true;
+            } else if (Character.isDigit(c)) {
+                containsDigit = true;
+            }
+        }
+
+        // Utiliser une regex pour vérifier d'autres conditions (par exemple, la longueur minimale)
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(password);
+
+        return containsUppercase && containsLowercase && containsDigit && matcher.matches();
+    }
+
+    private boolean isValidEmail(String email) {
+        // Utiliser une expression régulière pour valider l'email
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$";
+        return email.matches(emailRegex);
+    }
+
 
     // Méthode pour gérer l'action du bouton de retour.
     @FXML
