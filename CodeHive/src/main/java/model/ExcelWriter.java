@@ -8,24 +8,24 @@ import java.io.IOException;
 import java.util.Map;
 import java.io.FileInputStream;
 
-
 public class ExcelWriter {
 
+    // Méthode pour écrire les prix des cryptomonnaies et des actions dans un fichier Excel.
     public void writeDataToExcel(Map<String, Double> cryptoPrices, Map<String, Double> stockPrices, String excelFilePath) throws IOException {
-        // Création du classeur Excel
+        // Création d'un nouveau classeur Excel.
         Workbook workbook = new XSSFWorkbook();
 
-        // Création de la feuille pour les cryptomonnaies
+        // Création et remplissage de la feuille pour les cryptomonnaies.
         Sheet cryptoSheet = workbook.createSheet("Cryptocurrencies");
         createHeaderRow(cryptoSheet, "Cryptocurrency", "Price (USD)");
         fillData(cryptoSheet, cryptoPrices);
 
-        // Création de la feuille pour les actions
+        // Création et remplissage de la feuille pour les actions.
         Sheet stockSheet = workbook.createSheet("Stocks");
         createHeaderRow(stockSheet, "Stock Symbol", "Price (USD)");
         fillData(stockSheet, stockPrices);
 
-        // Vérification et création du fichier et des répertoires si nécessaire
+        // Vérification de l'existence du fichier et des répertoires, création si nécessaire.
         File file = new File(excelFilePath);
         if (!file.exists()) {
             File parentDirectory = file.getParentFile();
@@ -37,20 +37,22 @@ public class ExcelWriter {
             }
         }
 
-        // Écriture des données dans le fichier Excel
+        // Écriture du Workbook dans le fichier Excel.
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
             workbook.write(outputStream);
         } finally {
-            workbook.close(); // Assurez-vous de fermer le classeur pour libérer les ressources système
+            workbook.close(); // Fermeture du Workbook pour libérer les ressources.
         }
     }
 
+    // Méthode pour créer une ligne d'en-tête dans une feuille.
     private void createHeaderRow(Sheet sheet, String header1, String header2) {
         Row headerRow = sheet.createRow(0);
         headerRow.createCell(0).setCellValue(header1);
         headerRow.createCell(1).setCellValue(header2);
     }
 
+    // Méthode pour remplir les données dans une feuille.
     private void fillData(Sheet sheet, Map<String, Double> data) {
         int rowNum = 1;
         for (Map.Entry<String, Double> entry : data.entrySet()) {
@@ -60,7 +62,9 @@ public class ExcelWriter {
         }
     }
 
+    // Méthode pour mettre à jour les actifs d'un utilisateur dans un fichier Excel.
     public void updateUserAssets(String username, Map<String, Double> assets, String excelFilePath) throws IOException {
+        // Ouverture du fichier Excel et recherche de la ligne de l'utilisateur.
         try (FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
              Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
@@ -71,6 +75,7 @@ public class ExcelWriter {
             }
 
             Row userRow = sheet.getRow(userRowNum);
+            // Mise à jour ou création de cellules pour chaque actif.
             for (Map.Entry<String, Double> entry : assets.entrySet()) {
                 String assetKey = entry.getKey();
                 double assetValue = entry.getValue();
@@ -87,13 +92,14 @@ public class ExcelWriter {
                 cell.setCellValue(assetValue);
             }
 
-            // Écriture des modifications dans le fichier
+            // Écriture des modifications dans le fichier Excel.
             try (FileOutputStream outputStream = new FileOutputStream(excelFilePath)) {
                 workbook.write(outputStream);
             }
-        } // try-with-resources fermera automatiquement les ressources
+        } // Le bloc try-with-resources fermera automatiquement les ressources.
     }
 
+    // Méthode pour trouver le numéro de ligne d'un utilisateur dans la feuille.
     private int findUserRow(Sheet sheet, String username) {
         for (Row row : sheet) {
             Cell cell = row.getCell(0);
@@ -104,6 +110,7 @@ public class ExcelWriter {
         return -1;
     }
 
+    // Méthode pour trouver l'indice de colonne d'un en-tête spécifique.
     private int findColumnIndex(Sheet sheet, String header) {
         Row headerRow = sheet.getRow(0);
         for (int columnIndex = 0; columnIndex < headerRow.getLastCellNum(); columnIndex++) {

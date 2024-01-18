@@ -11,63 +11,60 @@ import java.security.SecureRandom;
 import java.util.*;
 
 public class User {
+    // Constantes pour le chemin du fichier et le générateur de nombres aléatoires sécurisés.
     private static final String USERS_FILE = "./Files/users.xlsx";
     private static final SecureRandom RANDOM = new SecureRandom();
-    private String username; // Champ pour stocker le nom d'utilisateur actuel
 
+    // Informations de l'utilisateur.
+    private String username;
     private Double balanceCrypto;
-
     private Double balanceCash;
-
     private Double balanceStock;
 
-    private Map<Crypto,Double> cryptoOwned = new HashMap<>();
+    // Actifs possédés par l'utilisateur.
+    private Map<Crypto, Double> cryptoOwned = new HashMap<>();
+    private Map<Action, Double> actionOwned = new HashMap<>();
 
-    private Map<Action,Double> actionOwned = new HashMap<>();
-
-
+    // Instances pour lire et écrire dans un fichier Excel.
     private ExcelWriter excelWriter = new ExcelWriter();
-
     private ExcelReader excelReader = new ExcelReader();
-
-
-
-
     public boolean authenticate(String username, String password) {
         try (InputStream is = new FileInputStream(USERS_FILE);
              Workbook workbook = new XSSFWorkbook(is)) {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
+                // Récupération des cellules contenant le nom d'utilisateur, le mot de passe et le sel.
                 Cell usernameCell = row.getCell(0);
                 Cell passwordCell = row.getCell(1);
                 Cell saltCell = row.getCell(2);
 
+                // Récupération des cellules contenant les soldes de crypto, d'actions et de trésorerie.
                 Cell cryptoCell = row.getCell(5);
                 Cell stockCell = row.getCell(6);
                 Cell cashCell = row.getCell(7);
 
-
+                // Vérification si le nom d'utilisateur correspond.
                 if (usernameCell != null && usernameCell.getStringCellValue().equals(username)) {
+                    // Hachage du mot de passe fourni avec le sel stocké pour vérification.
                     String salt = saltCell.getStringCellValue();
                     String hashedPassword = hashPassword(password, Base64.getDecoder().decode(salt));
 
-
-
-
+                    // Vérification si le mot de passe haché correspond à celui stocké.
                     if (passwordCell != null && passwordCell.getStringCellValue().equals(hashedPassword)) {
-                        this.username = username; // Mise à jour du nom d'utilisateur actuel
+                        // Si l'authentification est réussie, mise à jour des informations de l'utilisateur.
+                        this.username = username;
                         setBalanceCrypto(cryptoCell.getNumericCellValue());
                         setBalanceStock(stockCell.getNumericCellValue());
                         setBalanceCash(cashCell.getNumericCellValue());
-                        return true;
+                        return true; // Authentification réussie.
                     }
-                    break;
+                    break; // Sort de la boucle si le nom d'utilisateur a été trouvé (qu'il soit valide ou non).
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return false; // Authentification échouée.
     }
 
     public String getUsername() {

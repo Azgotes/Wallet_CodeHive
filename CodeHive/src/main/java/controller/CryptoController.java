@@ -20,34 +20,35 @@ import java.util.Map;
 
 public class CryptoController {
 
+    // Déclaration des composants de l'interface utilisateur pour le tableau et les colonnes.
     @FXML
     private TableView<Crypto> cryptoTable;
-
     @FXML
     private TableColumn<Crypto, String> nameColumn;
-
     @FXML
     private TableColumn<Crypto, Double> priceColumn;
 
+    // Instance de ExcelReader pour la lecture de données.
     private final ExcelReader excelReader = new ExcelReader();
 
+    // Instance de StartupManager pour la gestion du démarrage de l'application.
     private final StartupManager startupManager = new StartupManager();
 
+    // Liste pour stocker les données des cryptomonnaies.
     private List<Crypto> cryptoList;
 
+    // Variable pour stocker l'utilisateur actuel.
     private User currentUser;
 
-
+    // Méthode d'initialisation appelée pour configurer les colonnes du tableau.
     @FXML
     public void initialize() {
+        // Configuration des colonnes pour afficher les noms et les prix des cryptomonnaies.
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-
-
-
-
     }
 
+    // Méthode pour initialiser la liste des cryptomonnaies et mettre à jour les données dans le tableau.
     public void initCryptoList(List<Crypto> cryptoList){
         this.cryptoList = cryptoList;
         this.setCryptoData(this.cryptoList);
@@ -57,41 +58,43 @@ public class CryptoController {
         this.cryptoTable.setItems(crypto);
     }
 
+    // Méthode pour définir l'utilisateur actuel.
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
     }
 
+    // Méthode pour configurer les données des cryptomonnaies dans le tableau.
     public void setCryptoData(List<Crypto> cryptoList){
         ObservableList<Crypto> cryptos = FXCollections.observableArrayList();
         cryptoList.stream().map(cryptos::add);
         cryptoTable.setItems(cryptos);
     }
 
+    // Gestion de l'action du bouton "Retour".
     @FXML
     protected void handleBackButtonAction(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Wallet.fxml")); // Mettez à jour avec le chemin correct
+            // Chargement de l'interface utilisateur du portefeuille et configuration du contrôleur.
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Wallet.fxml"));
             Parent walletRoot = loader.load();
 
-            // Configurez le contrôleur WalletController si nécessaire
             WalletController walletController = loader.getController();
             walletController.setCurrentUser(currentUser);
             walletController.initComponents();
 
-            // Chargez la vue dans la scène actuelle ou une nouvelle, selon vos besoins
+            // Mise à jour de la scène actuelle avec la nouvelle interface utilisateur.
             Scene walletScene = new Scene(walletRoot);
-            Stage stage = (Stage) cryptoTable.getScene().getWindow(); // Récupérez la fenêtre actuelle
+            Stage stage = (Stage) cryptoTable.getScene().getWindow();
             stage.setScene(walletScene);
         } catch (IOException e) {
             e.printStackTrace();
-            // Gérez l'exception comme vous le jugez approprié
         }
     }
 
-
-
+    // Gestion de l'action du bouton "Actualiser".
     @FXML
     protected void handleRefreshButtonAction(ActionEvent event) {
+        // Réinitialisation des données de l'application et rechargement des données des cryptomonnaies.
         startupManager.initializeApplicationData();
         setCryptoData(this.cryptoList);
     }

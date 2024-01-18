@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 public class WalletController {
 
     @FXML
@@ -178,7 +177,6 @@ public class WalletController {
         // Code pour le menu item 1
     }
 
-    // ... Les autres méthodes pour les items du menu ...
 
     @FXML
     public void handleMenuMouseEntered(MouseEvent mouseEvent) {
